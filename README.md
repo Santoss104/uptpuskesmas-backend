@@ -16,10 +16,12 @@ Patient Management System API untuk Puskesmas dengan fitur lengkap dan role-base
 ## � User Roles
 
 ### User (Default)
+
 - View patients
 - Basic operations
 
 ### Admin
+
 - All user permissions
 - Create/Update/Delete patients
 - Manage users
@@ -176,15 +178,15 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 ## 🔐 Authorization Levels
 
-| Feature | User | Admin |
-|---------|------|-------|
-| View Patients | ✅ | ✅ |
-| Create Patients | ❌ | ✅ |
-| Update Patients | ❌ | ✅ |
-| Delete Patients | ❌ | ✅ |
-| Excel Operations | ❌ | ✅ |
-| User Management | ❌ | ✅ |
-| Create Admins | ❌ | ✅ |
+| Feature          | User | Admin |
+| ---------------- | ---- | ----- |
+| View Patients    | ✅   | ✅    |
+| Create Patients  | ❌   | ✅    |
+| Update Patients  | ❌   | ✅    |
+| Delete Patients  | ❌   | ✅    |
+| Excel Operations | ❌   | ✅    |
+| User Management  | ❌   | ✅    |
+| Create Admins    | ❌   | ✅    |
 
 ## 🛠️ Development Scripts
 

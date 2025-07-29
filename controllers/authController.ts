@@ -79,8 +79,8 @@ export const registrationUser = CatchAsyncError(
 
       res.status(201).json({
         success: true,
-        message: isFirstUser 
-          ? "Admin account created successfully!" 
+        message: isFirstUser
+          ? "Admin account created successfully!"
           : "User registered successfully!",
         user: {
           _id: user._id,
@@ -119,14 +119,11 @@ export const createAdminUser = CatchAsyncError(
 
       let userAvatar;
       try {
-        const myCloud = await cloudinary.v2.uploader.upload(
-          defaultAvatarUrl,
-          {
-            folder: "avatars/admins",
-            width: 150,
-            public_id: `admin_${email.split("@")[0]}_${Date.now()}`,
-          }
-        );
+        const myCloud = await cloudinary.v2.uploader.upload(defaultAvatarUrl, {
+          folder: "avatars/admins",
+          width: 150,
+          public_id: `admin_${email.split("@")[0]}_${Date.now()}`,
+        });
 
         userAvatar = {
           public_id: myCloud.public_id,
