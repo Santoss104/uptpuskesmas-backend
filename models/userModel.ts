@@ -25,7 +25,7 @@ export interface IUser extends Document {
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
   isAdmin: () => boolean;
-  // NEW: Security methods
+  // Security methods
   isLocked: () => boolean;
   incrementLoginAttempts: () => Promise<void>;
   resetLoginAttempts: () => Promise<void>;
@@ -46,7 +46,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     password: {
       type: String,
-      minlength: [8, "Password must be at least 8 characters"], // Improved from 6 to 8
+      minlength: [8, "Password must be at least 8 characters"],
       validate: {
         validator: function (value: string) {
           // Strong password validation for production
@@ -56,7 +56,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
               value
             );
           }
-          // Development: just minimum length
           return value.length >= 8;
         },
         message:
@@ -79,7 +78,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // NEW: Security tracking fields for production
     lastLogin: {
       type: Date,
     },

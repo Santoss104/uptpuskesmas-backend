@@ -20,7 +20,7 @@ import { checkRedisHealth } from "./utils/redis";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 
-// NEW IMPORTS - Production enhancements
+// Production enhancements
 import logger from "./utils/logger";
 import {
   metricsMiddleware,
@@ -31,13 +31,13 @@ import { ApiResponseHandler } from "./utils/apiResponse";
 
 export const app = express();
 
-// Trust proxy (important for rate limiting behind reverse proxy)
+// Trust proxy 
 app.set("trust proxy", 1);
 
-// NEW: Request ID middleware (should be first)
+// Request ID middleware
 app.use(requestIdMiddleware);
 
-// NEW: Metrics and performance monitoring
+// Metrics and performance monitoring
 app.use(metricsMiddleware);
 app.use(performanceMiddleware);
 
@@ -78,9 +78,9 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  // NEW: Skip rate limiting for health checks
+  // Skip rate limiting for health checks
   skip: (req) => req.path === "/health",
-  // NEW: Custom handler for rate limit exceeded
+  // Custom handler for rate limit exceeded
   handler: (req, res) => {
     logger.warn("Rate limit exceeded", {
       ip: req.ip,
@@ -105,7 +105,6 @@ const authLimiter = rateLimit({
     message: "Too many authentication attempts, please try again later.",
   },
   skipSuccessfulRequests: true,
-  // NEW: Custom handler for auth rate limit
   handler: (req, res) => {
     logger.warn("Auth rate limit exceeded", {
       ip: req.ip,
@@ -125,12 +124,10 @@ const authLimiter = rateLimit({
 app.use("/api", limiter);
 app.use("/api/v1/auth", authLimiter);
 
-// Body parsing middleware with reasonable limits
 const bodyLimit = process.env.NODE_ENV === "production" ? "10mb" : "50mb";
 app.use(
   express.json({
     limit: bodyLimit,
-    // NEW: Better error handling for malformed JSON
     verify: (req, res, buf) => {
       try {
         JSON.parse(buf.toString());
@@ -170,15 +167,14 @@ app.use(
       "Authorization",
       "Cache-Control",
       "Pragma",
-      "X-Request-ID", // NEW: Support for request ID header
+      "X-Request-ID",
     ],
-    exposedHeaders: ["set-cookie", "X-Request-ID"], // NEW: Expose request ID
+    exposedHeaders: ["set-cookie", "X-Request-ID"],
   })
 );
 
-// IMPROVED: Logging middleware with winston
+// Logging middleware with winston
 if (process.env.NODE_ENV === "production") {
-  // Use winston for production logging instead of morgan
   app.use((req, res, next) => {
     logger.info("HTTP Request", {
       method: req.method,
@@ -193,21 +189,20 @@ if (process.env.NODE_ENV === "production") {
   app.use(morgan("dev"));
 }
 
-// IMPROVED: Enhanced health check endpoint
+// Enhanced health check endpoint
 app.get("/health", async (req: Request, res: Response) => {
   const healthCheck = {
     status: "OK",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV || "development",
-    version: process.env.npm_package_version || "unknown", // NEW: App version
-    requestId: req.requestId, // NEW: Include request ID
+    version: process.env.npm_package_version || "unknown",
+    requestId: req.requestId,
     services: {
       database: "unknown",
       redis: "unknown",
       cloudinary: "unknown",
     },
-    // NEW: System metrics
     system: {
       memory: {
         used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + "MB",
@@ -271,7 +266,7 @@ app.get("/health", async (req: Request, res: Response) => {
     const statusCode = allServicesHealthy ? 200 : 503;
     healthCheck.status = allServicesHealthy ? "OK" : "DEGRADED";
 
-    // NEW: Log health check results in production
+    // Log health check results in production
     if (process.env.NODE_ENV === "production" && !allServicesHealthy) {
       logger.warn("Health check failed", {
         services: healthCheck.services,
@@ -298,13 +293,13 @@ app.get("/health", async (req: Request, res: Response) => {
   }
 });
 
-// API Routes (order matters!)
+// API Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/patients/excel", patientsFromExcel);
 app.use("/api/v1/patients", patientRouter);
 
-// IMPROVED: API documentation route with better response
+// API documentation route with better response
 app.get("/api/v1", (req: Request, res: Response) => {
   return ApiResponseHandler.success(
     res,
@@ -324,7 +319,7 @@ app.get("/api/v1", (req: Request, res: Response) => {
   );
 });
 
-// IMPROVED: 404 handler with logging
+// 404 handler with logging
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   logger.warn("Route not found", {
     method: req.method,
@@ -337,7 +332,7 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   return ApiResponseHandler.notFound(res, `Route ${req.originalUrl} not found`);
 });
 
-// IMPROVED: Global error handling middleware with winston logging
+// Global error handling middleware with winston logging
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   let error = { ...err };
   error.message = err.message;
@@ -385,12 +380,12 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     error = { message, statusCode: 401 };
   }
 
-  // NEW: Handle JSON parsing errors
+  // Handle JSON parsing errors
   if (err.message === "Invalid JSON format") {
     error = { message: "Invalid JSON format in request body", statusCode: 400 };
   }
 
-  // NEW: Use ApiResponseHandler for consistent error responses
+  // Use ApiResponseHandler for consistent error responses
   return ApiResponseHandler.error(
     res,
     error.message || "Internal Server Error",

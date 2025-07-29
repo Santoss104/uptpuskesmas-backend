@@ -18,7 +18,6 @@ import {
 
 const authRouter = express.Router();
 
-// Apply rate limiting and validation to sensitive auth endpoints
 authRouter.post(
   "/registration",
   registrationRateLimit,
@@ -32,6 +31,6 @@ authRouter.post(
   loginUser
 );
 authRouter.get("/logout", isAutheticated, logoutUser);
-authRouter.post("/social-auth", loginRateLimit, socialAuth); // Also rate limit social auth
+authRouter.post("/social-auth", loginRateLimit, socialAuth);
 
 export default authRouter;

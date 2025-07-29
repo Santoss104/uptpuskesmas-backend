@@ -7,11 +7,10 @@ const logFormat = winston.format.combine(
 );
 
 const logger = winston.createLogger({
-  level: process.env.NODE_ENV === "production" ? "warn" : "debug", // Changed to 'warn' for production
+  level: process.env.NODE_ENV === "production" ? "warn" : "debug",
   format: logFormat,
   defaultMeta: { service: "patient-management-api" },
   transports: [
-    // Write all logs with importance level of `error` or less to `error.log`
     new winston.transports.File({
       filename: "logs/error.log",
       level: "error",
@@ -19,7 +18,6 @@ const logger = winston.createLogger({
       maxFiles: 5,
     }),
 
-    // Write all logs to `combined.log`
     new winston.transports.File({
       filename: "logs/combined.log",
       maxsize: 5242880, // 5MB

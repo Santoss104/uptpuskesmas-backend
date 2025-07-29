@@ -25,7 +25,6 @@ export const exportPatientsToExcel = CatchAsyncError(
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(excelData);
 
-      // Set width kolom
       const columnWidths = [
         { wch: 5 },
         { wch: 25 },
@@ -93,7 +92,6 @@ export const importPatientsFromExcel = CatchAsyncError(
             row["Registration Number"] || row["registrationNumber"];
           const birthInfo = row["Birth Day"] || row["birthDay"];
 
-          // Parse birth info to separate place and date
           let birthPlace = "";
           let birthDay = "";
 
@@ -103,7 +101,6 @@ export const importPatientsFromExcel = CatchAsyncError(
               birthPlace = parts[0];
               birthDay = parts[1];
             } else {
-              // If no comma, assume it's just the date
               birthDay = birthInfo;
               birthPlace = "Unknown";
             }

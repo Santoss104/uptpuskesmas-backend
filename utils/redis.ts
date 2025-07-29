@@ -35,7 +35,7 @@ export const checkRedisHealth = async (): Promise<boolean> => {
   }
 };
 
-// Graceful shutdown function
+// shutdown function
 export const closeRedisConnection = async (): Promise<void> => {
   try {
     await redis.quit();

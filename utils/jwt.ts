@@ -33,8 +33,8 @@ export const accessTokenOptions: ITokenOptions = {
 };
 
 export const refreshTokenOptions: ITokenOptions = {
-  expires: new Date(Date.now() + refreshTokenExpire * 60 * 1000), // Minutes to milliseconds
-  maxAge: refreshTokenExpire * 60 * 1000, // Minutes to milliseconds
+  expires: new Date(Date.now() + refreshTokenExpire * 60 * 1000),
+  maxAge: refreshTokenExpire * 60 * 1000,
   httpOnly: true,
   sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Stricter for production
   secure: process.env.NODE_ENV === "production", // Only secure in production
@@ -51,7 +51,6 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   res.cookie("access_token", accessToken, accessTokenOptions);
   res.cookie("refresh_token", refreshToken, refreshTokenOptions);
 
-  // Don't send sensitive data in production
   const userResponse = {
     _id: user._id,
     email: user.email,

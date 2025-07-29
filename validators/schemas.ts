@@ -58,11 +58,11 @@ export const userRegistrationSchema = Joi.object({
   }),
 
   password: Joi.string()
-    .min(process.env.NODE_ENV === "production" ? 8 : 6) // More strict in production
+    .min(process.env.NODE_ENV === "production" ? 8 : 6)
     .pattern(
       process.env.NODE_ENV === "production"
         ? /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-        : /^.{6,}$/ // Relaxed for development
+        : /^.{6,}$/
     )
     .required()
     .messages({

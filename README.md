@@ -14,11 +14,13 @@ Patient Management System API untuk Puskesmas dengan fitur lengkap.
 ## 📋 API Endpoints
 
 ### Authentication
+
 - `POST /api/v1/auth/registration` - Register new user
 - `POST /api/v1/auth/login` - User login
 - `POST /api/v1/auth/logout` - User logout
 
 ### Patients
+
 - `GET /api/v1/patients` - Get all patients
 - `POST /api/v1/patients/create` - Create new patient
 - `GET /api/v1/patients/:id` - Get patient by ID
@@ -27,11 +29,13 @@ Patient Management System API untuk Puskesmas dengan fitur lengkap.
 - `GET /api/v1/patients/search` - Search patients
 
 ### Excel Operations
+
 - `GET /api/v1/patients/excel/export` - Export patients to Excel
 - `POST /api/v1/patients/excel/import` - Import patients from Excel
 - `GET /api/v1/patients/excel/template` - Download Excel template
 
 ### Health Check
+
 - `GET /health` - Application health status
 
 ## 🔧 Technology Stack
@@ -48,11 +52,13 @@ Patient Management System API untuk Puskesmas dengan fitur lengkap.
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - MongoDB database
 - Redis instance
 
 ### Installation
+
 ```bash
 # Clone repository
 git clone <repository-url>
@@ -72,10 +78,11 @@ npm run start:dev
 ## 📊 Data Format
 
 ### Patient Schema
+
 ```json
 {
   "name": "Anita",
-  "address": "Desa Baru", 
+  "address": "Desa Baru",
   "registrationNumber": "01.01.00.01",
   "birthDay": "Palembang, 1961-09-18",
   "createdAt": "2025-07-29T12:48:10.056Z",
@@ -96,7 +103,3 @@ npm run start:dev
 ## 👨‍💻 Developer
 
 **Ikhlas Abdillah** - Backend Developer
-
----
-
-Ready for development! 🎉

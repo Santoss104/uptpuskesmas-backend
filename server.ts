@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
-// Configure dotenv with minimal logging for production
 dotenv.config({
-  debug: false, // Disable debug always
-  override: false, // Don't override existing env vars
+  debug: false,
+  override: false,
 });
 
 import { v2 as cloudinary } from "cloudinary";
@@ -11,14 +10,12 @@ import { app } from "./app";
 import connectDB from "./utils/db";
 import { closeRedisConnection } from "./utils/redis";
 
-// NEW IMPORTS - Production enhancements
+// Production enhancements
 import { validateEnvironment } from "./utils/envValidator";
 import logger from "./utils/logger";
 
-// NEW: Environment validation with the new validator
 const env = validateEnvironment();
 
-// Additional environment validation for server-specific vars
 const serverRequiredVars = ["ACCESS_TOKEN", "REFRESH_TOKEN"];
 const missingServerVars = serverRequiredVars.filter(
   (envVar) => !process.env[envVar]
@@ -40,7 +37,7 @@ cloudinary.config({
   api_secret: env.CLOUD_SECRET_KEY,
 });
 
-// IMPROVED: Test Cloudinary connection with better logging
+// Test Cloudinary connection
 const testCloudinaryConnection = async (): Promise<void> => {
   try {
     await cloudinary.api.ping();
@@ -58,7 +55,7 @@ const NODE_ENV = env.NODE_ENV;
 
 let server: any;
 
-// IMPROVED: Start server with better logging
+// Start server
 const startServer = async (): Promise<void> => {
   try {
     // Database connection
@@ -82,7 +79,6 @@ const startServer = async (): Promise<void> => {
 
       logger.info("Server started successfully", startupInfo);
 
-      // Show detailed startup info only in development
       if (NODE_ENV === "development") {
         console.log(`
 ╭─────────────────────────────────────╮
@@ -96,7 +92,6 @@ const startServer = async (): Promise<void> => {
 ╰─────────────────────────────────────╯
         `);
       } else {
-        // Simple production startup message
         console.log(`✅ Server started on port ${PORT} (${NODE_ENV})`);
       }
     });
@@ -114,7 +109,7 @@ const startServer = async (): Promise<void> => {
       }
     });
 
-    // NEW: Handle server timeout
+    // Handle server timeout
     server.timeout = 30000; // 30 seconds timeout
   } catch (error) {
     logger.error("Failed to start server", {
@@ -125,7 +120,6 @@ const startServer = async (): Promise<void> => {
   }
 };
 
-// IMPROVED: Graceful shutdown with better logging and error handling
 const gracefulShutdown = async (signal: string): Promise<void> => {
   logger.info(`Received ${signal}, starting graceful shutdown...`);
 
@@ -135,7 +129,6 @@ const gracefulShutdown = async (signal: string): Promise<void> => {
   }, 30000);
 
   try {
-    // NEW: Stop accepting new connections first
     if (server) {
       server.close(async (err: any) => {
         if (err) {
@@ -145,7 +138,6 @@ const gracefulShutdown = async (signal: string): Promise<void> => {
         }
       });
 
-      // NEW: Wait for existing connections to close
       await new Promise<void>((resolve) => {
         server.close(() => {
           resolve();
@@ -182,7 +174,6 @@ const gracefulShutdown = async (signal: string): Promise<void> => {
   }
 };
 
-// IMPROVED: Error event handlers with winston logging
 process.on("unhandledRejection", (reason: unknown, promise: Promise<any>) => {
   logger.error("Unhandled Promise Rejection detected", {
     reason: reason,
@@ -205,7 +196,6 @@ process.on("uncaughtException", (error: Error) => {
 
   logger.error("Process will exit due to uncaught exception");
 
-  // NEW: In production, try graceful shutdown first
   if (NODE_ENV === "production") {
     setTimeout(() => {
       process.exit(1);
@@ -224,7 +214,6 @@ if (process.platform === "win32") {
   process.on("SIGBREAK", () => gracefulShutdown("SIGBREAK"));
 }
 
-// NEW: Additional process monitoring
 process.on("warning", (warning) => {
   logger.warn("Process warning", {
     name: warning.name,
@@ -242,7 +231,6 @@ startServer().catch((error) => {
   process.exit(1);
 });
 
-// IMPROVED: Memory monitoring with better intervals and thresholds
 if (NODE_ENV === "development") {
   setInterval(() => {
     const memUsage = process.memoryUsage();
@@ -258,14 +246,12 @@ if (NODE_ENV === "development") {
 
     logger.debug("Memory usage", memoryInfo);
 
-    // NEW: Warning for high memory usage
     if (memUsage.heapUsed > 150 * 1024 * 1024) {
       // 150MB threshold
       logger.warn("High memory usage detected", memoryInfo);
     }
   }, 300000); // Every 5 minutes
 } else if (NODE_ENV === "production") {
-  // NEW: Production memory monitoring (less frequent, but still monitored)
   setInterval(() => {
     const memUsage = process.memoryUsage();
     const formatBytes = (bytes: number) =>
@@ -282,7 +268,6 @@ if (NODE_ENV === "development") {
   }, 600000); // Every 10 minutes in production
 }
 
-// NEW: CPU usage monitoring in production
 if (NODE_ENV === "production") {
   setInterval(() => {
     const cpuUsage = process.cpuUsage();
