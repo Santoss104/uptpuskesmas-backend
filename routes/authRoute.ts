@@ -4,8 +4,9 @@ import {
   logoutUser,
   registrationUser,
   socialAuth,
+  createAdminUser,
 } from "../controllers/authController";
-import { isAutheticated } from "../middleware/authMiddleware";
+import { isAutheticated, authorizeRoles } from "../middleware/authMiddleware";
 import {
   loginRateLimit,
   registrationRateLimit,
@@ -32,5 +33,12 @@ authRouter.post(
 );
 authRouter.get("/logout", isAutheticated, logoutUser);
 authRouter.post("/social-auth", loginRateLimit, socialAuth);
+authRouter.post(
+  "/create-admin",
+  isAutheticated,
+  authorizeRoles("admin"),
+  validateRequest(userRegistrationSchema),
+  createAdminUser
+);
 
 export default authRouter;

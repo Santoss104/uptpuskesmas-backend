@@ -32,6 +32,10 @@ export const registrationUser = CatchAsyncError(
         return next(new ErrorHandler("User already exists", 400)); // Less specific error for production
       }
 
+      // Check if this is the first user - make them admin
+      const userCount = await UserModel.countDocuments();
+      const isFirstUser = userCount === 0;
+
       let userAvatar;
 
       if (avatar) {
@@ -70,17 +74,88 @@ export const registrationUser = CatchAsyncError(
         password,
         avatar: userAvatar,
         isVerified: true,
+        role: isFirstUser ? "admin" : "user", // First user becomes admin
       });
 
       res.status(201).json({
         success: true,
-        message: "User registered successfully!",
+        message: isFirstUser 
+          ? "Admin account created successfully!" 
+          : "User registered successfully!",
         user: {
           _id: user._id,
           email: user.email,
           role: user.role,
           isVerified: user.isVerified,
           avatar: user.avatar,
+        },
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// Create admin user (only for existing admins)
+export const createAdminUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, password, confirmPassword } = req.body;
+
+      if (password !== confirmPassword) {
+        return next(new ErrorHandler("Passwords do not match", 400));
+      }
+
+      const isEmailExist = await UserModel.findOne({ email });
+      if (isEmailExist) {
+        return next(new ErrorHandler("User already exists", 400));
+      }
+
+      // Generate default avatar for admin
+      const defaultAvatarUrl =
+        "https://ui-avatars.com/api/?name=" +
+        encodeURIComponent(email.split("@")[0]) +
+        "&background=dc2626&color=fff&size=200"; // Red background for admin
+
+      let userAvatar;
+      try {
+        const myCloud = await cloudinary.v2.uploader.upload(
+          defaultAvatarUrl,
+          {
+            folder: "avatars/admins",
+            width: 150,
+            public_id: `admin_${email.split("@")[0]}_${Date.now()}`,
+          }
+        );
+
+        userAvatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      } catch (cloudinaryError) {
+        userAvatar = {
+          public_id: `external_admin_${Date.now()}`,
+          url: defaultAvatarUrl,
+        };
+      }
+
+      const adminUser = await UserModel.create({
+        email,
+        password,
+        avatar: userAvatar,
+        isVerified: true,
+        role: "admin",
+      });
+
+      res.status(201).json({
+        success: true,
+        message: "Admin user created successfully!",
+        user: {
+          _id: adminUser._id,
+          email: adminUser.email,
+          role: adminUser.role,
+          isVerified: adminUser.isVerified,
+          avatar: adminUser.avatar,
         },
       });
     } catch (error: any) {

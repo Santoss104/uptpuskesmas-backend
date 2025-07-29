@@ -127,6 +127,15 @@ patients_*.xlsx
 *.test.xlsx
 /test_exports/
 
+# Testing and utility scripts (development only)
+test-*.ts
+test-*.js
+test-all-*.js
+clear-*.ts
+clear-*.js
+make-admin.ts
+list-users.ts
+
 # Backup files
 *.bak
 *.backup
