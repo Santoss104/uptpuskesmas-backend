@@ -38,20 +38,36 @@ Patient Management System API untuk Puskesmas dengan fitur lengkap.
 
 - **Runtime:** Node.js with TypeScript
 - **Framework:** Express.js
-- **Database:** MongoDB (Atlas)
-- **Cache:** Redis (Upstash)
+- **Database:** MongoDB
+- **Cache:** Redis
 - **File Storage:** Cloudinary
 - **Authentication:** JWT
 - **Validation:** Joi
 - **Security:** Helmet, CORS, Rate limiting
 
-## 🌐 Deployment
+## 🚀 Getting Started
 
-This application is optimized for deployment on:
-- ✅ **Koyeb** (Always-on free tier)
-- ✅ **AWS EC2** (Free tier)
-- ✅ **DigitalOcean** (VPS)
-- ✅ **Docker** (Container deployment)
+### Prerequisites
+- Node.js 18+ 
+- MongoDB database
+- Redis instance
+
+### Installation
+```bash
+# Clone repository
+git clone <repository-url>
+cd puskesmas-backend
+
+# Install dependencies
+npm install
+
+# Setup environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Start development server
+npm run start:dev
+```
 
 ## 📊 Data Format
 
@@ -59,7 +75,7 @@ This application is optimized for deployment on:
 ```json
 {
   "name": "Anita",
-  "address": "Desa Baru",
+  "address": "Desa Baru", 
   "registrationNumber": "01.01.00.01",
   "birthDay": "Palembang, 1961-09-18",
   "createdAt": "2025-07-29T12:48:10.056Z",
@@ -77,15 +93,10 @@ This application is optimized for deployment on:
 - ✅ CORS protection
 - ✅ Security headers (Helmet)
 
-## 🚀 Live Demo
-
-- **API Base URL:** `https://your-app.koyeb.app/api/v1`
-- **Health Check:** `https://your-app.koyeb.app/health`
-
 ## 👨‍💻 Developer
 
 **Ikhlas Abdillah** - Backend Developer
 
 ---
 
-Ready for production deployment! 🎉
+Ready for development! 🎉
