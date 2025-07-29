@@ -13,6 +13,7 @@ yarn.lock
 .env.test.local
 .env.production.local
 .env.production
+.env.render
 *.env
 
 # Build outputs
