@@ -14,6 +14,7 @@ import authRouter from "./routes/authRoute";
 import userRouter from "./routes/userRoute";
 import patientRouter from "./routes/patientRoute";
 import patientsFromExcel from "./routes/patientExcelRoute";
+import calendarRouter from "./routes/calendarRoute";
 
 // Utils
 import { checkRedisHealth } from "./utils/redis";
@@ -31,7 +32,7 @@ import { ApiResponseHandler } from "./utils/apiResponse";
 
 export const app = express();
 
-// Trust proxy 
+// Trust proxy
 app.set("trust proxy", 1);
 
 // Request ID middleware
@@ -298,6 +299,7 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/patients/excel", patientsFromExcel);
 app.use("/api/v1/patients", patientRouter);
+app.use("/api/v1/calendar", calendarRouter);
 
 // API documentation route with better response
 app.get("/api/v1", (req: Request, res: Response) => {

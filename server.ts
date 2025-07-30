@@ -123,24 +123,30 @@ const startServer = async (): Promise<void> => {
 const gracefulShutdown = async (signal: string): Promise<void> => {
   logger.info(`Received ${signal}, starting graceful shutdown...`);
 
+  // Prevent multiple shutdown calls
+  if ((gracefulShutdown as any).isShuttingDown) {
+    logger.info("Shutdown already in progress, ignoring signal");
+    return;
+  }
+  (gracefulShutdown as any).isShuttingDown = true;
+
   const shutdownTimeout = setTimeout(() => {
     logger.error("Graceful shutdown timeout (30s), forcing shutdown...");
     process.exit(1);
   }, 30000);
 
   try {
-    if (server) {
-      server.close(async (err: any) => {
-        if (err) {
-          logger.error("Error closing HTTP server", { error: err.message });
-        } else {
-          logger.info("HTTP server closed successfully");
-        }
-      });
-
-      await new Promise<void>((resolve) => {
-        server.close(() => {
-          resolve();
+    // Close HTTP server
+    if (server && server.listening) {
+      await new Promise<void>((resolve, reject) => {
+        server.close((err: any) => {
+          if (err) {
+            logger.error("Error closing HTTP server", { error: err.message });
+            reject(err);
+          } else {
+            logger.info("HTTP server closed successfully");
+            resolve();
+          }
         });
       });
     }
@@ -163,14 +169,26 @@ const gracefulShutdown = async (signal: string): Promise<void> => {
 
     clearTimeout(shutdownTimeout);
     logger.info("Graceful shutdown completed successfully");
-    process.exit(0);
+
+    // Windows-specific: Small delay to allow cleanup
+    if (process.platform === "win32") {
+      setTimeout(() => process.exit(0), 100);
+    } else {
+      process.exit(0);
+    }
   } catch (error) {
     clearTimeout(shutdownTimeout);
     logger.error("Error during graceful shutdown", {
       error: (error as Error).message,
       stack: (error as Error).stack,
     });
-    process.exit(1);
+
+    // Windows-specific: Small delay before force exit
+    if (process.platform === "win32") {
+      setTimeout(() => process.exit(1), 100);
+    } else {
+      process.exit(1);
+    }
   }
 };
 
@@ -206,12 +224,30 @@ process.on("uncaughtException", (error: Error) => {
   }
 });
 
-// Shutdown signal handlers
+// Shutdown signal handlers with Windows-specific handling
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
+// Windows-specific signal handling
 if (process.platform === "win32") {
   process.on("SIGBREAK", () => gracefulShutdown("SIGBREAK"));
+
+  // Handle Windows Ctrl+C more gracefully
+  process.on("SIGINT", () => {
+    logger.info("Received SIGINT (Ctrl+C) on Windows");
+    gracefulShutdown("SIGINT");
+  });
+
+  // Handle tsx watch mode restart signals
+  process.on("SIGUSR1", () => {
+    logger.info("Received SIGUSR1 (restart signal)");
+    gracefulShutdown("SIGUSR1");
+  });
+
+  process.on("SIGUSR2", () => {
+    logger.info("Received SIGUSR2 (restart signal)");
+    gracefulShutdown("SIGUSR2");
+  });
 }
 
 process.on("warning", (warning) => {
