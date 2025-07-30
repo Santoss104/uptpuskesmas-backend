@@ -59,3 +59,40 @@ export const authorizeRoles = (...roles: string[]) => {
     next();
   };
 };
+
+// Check if user is admin
+export const isAdmin = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    if (req.user?.role !== "admin") {
+      return next(
+        new ErrorHandler("Access denied. Admin privileges required.", 403)
+      );
+    }
+    next();
+  }
+);
+
+// Check if user can access resource (own resource or admin)
+export const canAccessResource = (resourceOwnerField: string = "userId") => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const currentUserId = req.user?._id;
+    const resourceOwnerId = req.params.id || req.body[resourceOwnerField];
+
+    // Admin can access any resource
+    if (req.user?.role === "admin") {
+      return next();
+    }
+
+    // User can only access their own resources
+    if (currentUserId === resourceOwnerId) {
+      return next();
+    }
+
+    return next(
+      new ErrorHandler(
+        "Access denied. You can only access your own resources.",
+        403
+      )
+    );
+  };
+};

@@ -5,6 +5,7 @@ import { CatchAsyncError } from "../middleware/catchAsyncError";
 import {
   getAllPatientsService,
   getPatientByIdService,
+  getTotalPatientsService,
 } from "../services/patientService";
 
 // Create patient
@@ -40,8 +41,35 @@ export const createPatient = CatchAsyncError(
 
 // Get all patients
 export const getAllPatients = CatchAsyncError(
-  async (_req: Request, res: Response, next: NextFunction) => {
-    await getAllPatientsService(res);
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Extract query parameters
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      sortBy = "name", // Default sort by name untuk alfabetis
+      sortOrder = "asc", // Default ascending untuk alfabetis
+    } = req.query;
+
+    // Validate and convert parameters
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(
+      100,
+      Math.max(1, parseInt(limit as string) || 10)
+    ); // Max 100 per page
+
+    const paginationParams = {
+      page: pageNum,
+      limit: limitNum,
+      search: search as string,
+      sortBy: sortBy as string,
+      sortOrder:
+        (sortOrder as string).toLowerCase() === "asc"
+          ? ("asc" as const)
+          : ("desc" as const),
+    };
+
+    await getAllPatientsService(res, paginationParams);
   }
 );
 
@@ -96,7 +124,7 @@ export const deletePatient = CatchAsyncError(
 // Search patients by name or initial letter
 export const searchPatients = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { q, startsWith } = req.query;
+    const { q, startsWith, page = 1, limit = 10 } = req.query;
 
     let query: any = {};
 
@@ -107,11 +135,180 @@ export const searchPatients = CatchAsyncError(
       query.name = { $regex: regex };
     }
 
-    const patients = await PatientModel.find(query);
+    // Pagination for search results
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(
+      100,
+      Math.max(1, parseInt(limit as string) || 10)
+    );
+    const skip = (pageNum - 1) * limitNum;
+
+    const totalPatients = await PatientModel.countDocuments(query);
+    const patients = await PatientModel.find(query)
+      .sort({ name: 1 }) // Always sort alphabetically
+      .skip(skip)
+      .limit(limitNum)
+      .lean();
+
+    const totalPages = Math.ceil(totalPatients / limitNum);
 
     res.status(200).json({
       success: true,
-      data: patients,
+      data: {
+        patients,
+        pagination: {
+          currentPage: pageNum,
+          totalPages,
+          totalPatients,
+          patientsPerPage: limitNum,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
     });
+  }
+);
+
+// Search patients by name specifically
+export const searchPatientsByName = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { name, page = 1, limit = 10 } = req.query;
+
+    if (!name) {
+      return next(new ErrorHandler("Name parameter is required", 400));
+    }
+
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(
+      100,
+      Math.max(1, parseInt(limit as string) || 10)
+    );
+    const skip = (pageNum - 1) * limitNum;
+
+    const query = { name: { $regex: name as string, $options: "i" } };
+
+    const totalPatients = await PatientModel.countDocuments(query);
+    const patients = await PatientModel.find(query)
+      .sort({ name: 1 })
+      .skip(skip)
+      .limit(limitNum)
+      .lean();
+
+    const totalPages = Math.ceil(totalPatients / limitNum);
+
+    res.status(200).json({
+      success: true,
+      message: `Found ${totalPatients} patients matching name "${name}"`,
+      data: {
+        patients,
+        pagination: {
+          currentPage: pageNum,
+          totalPages,
+          totalPatients,
+          patientsPerPage: limitNum,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    });
+  }
+);
+
+// Search patients by address specifically
+export const searchPatientsByAddress = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { address, page = 1, limit = 10 } = req.query;
+
+    if (!address) {
+      return next(new ErrorHandler("Address parameter is required", 400));
+    }
+
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(
+      100,
+      Math.max(1, parseInt(limit as string) || 10)
+    );
+    const skip = (pageNum - 1) * limitNum;
+
+    const query = { address: { $regex: address as string, $options: "i" } };
+
+    const totalPatients = await PatientModel.countDocuments(query);
+    const patients = await PatientModel.find(query)
+      .sort({ name: 1 }) // Sort by name even when searching by address
+      .skip(skip)
+      .limit(limitNum)
+      .lean();
+
+    const totalPages = Math.ceil(totalPatients / limitNum);
+
+    res.status(200).json({
+      success: true,
+      message: `Found ${totalPatients} patients in address "${address}"`,
+      data: {
+        patients,
+        pagination: {
+          currentPage: pageNum,
+          totalPages,
+          totalPatients,
+          patientsPerPage: limitNum,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    });
+  }
+);
+
+// Get patients by alphabet (first letter of name)
+export const getPatientsByAlphabet = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { letter, page = 1, limit = 10 } = req.query;
+
+    if (!letter || (letter as string).length !== 1) {
+      return next(new ErrorHandler("Single letter parameter is required", 400));
+    }
+
+    const pageNum = Math.max(1, parseInt(page as string) || 1);
+    const limitNum = Math.min(
+      100,
+      Math.max(1, parseInt(limit as string) || 10)
+    );
+    const skip = (pageNum - 1) * limitNum;
+
+    const query = { name: { $regex: `^${letter}`, $options: "i" } };
+
+    const totalPatients = await PatientModel.countDocuments(query);
+    const patients = await PatientModel.find(query)
+      .sort({ name: 1 })
+      .skip(skip)
+      .limit(limitNum)
+      .lean();
+
+    const totalPages = Math.ceil(totalPatients / limitNum);
+
+    res.status(200).json({
+      success: true,
+      message: `Found ${totalPatients} patients with names starting with "${letter
+        .toString()
+        .toUpperCase()}"`,
+      data: {
+        patients,
+        pagination: {
+          currentPage: pageNum,
+          totalPages,
+          totalPatients,
+          patientsPerPage: limitNum,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1,
+        },
+      },
+    });
+  }
+);
+
+// Get total count of all patients with statistics
+export const getTotalPatients = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    await getTotalPatientsService(res);
   }
 );

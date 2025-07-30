@@ -13,6 +13,11 @@ yarn.lock
 .env.test.local
 .env.production.local
 *.env
+.env.*
+
+# Database connection files (sensitive)
+config/database.json
+config/production.json
 
 # Build outputs
 build/
@@ -128,8 +133,20 @@ patients_*.xlsx
 /test_exports/
 
 # Testing and utility scripts (development only)
-
 make-admin.ts
+*test*.js
+*test*.ts
+*check*.js
+integration-*.js
+final-*.js
+
+# Security sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
+private/
+secrets/
 
 # Backup files
 *.bak

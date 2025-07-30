@@ -5,205 +5,288 @@ Patient Management System API untuk Puskesmas dengan fitur lengkap dan role-base
 ## 🚀 Features
 
 - ✅ **Authentication & Authorization** (JWT dengan refresh tokens + Role-based access)
-- ✅ **Patient Management** (CRUD operations dengan authorization)
-- ✅ **Excel Import/Export** (Template-based data management)
-- ✅ **Search & Filtering** (Advanced patient search)
-- ✅ **Role-Based Access Control** (User/Admin hierarchy)
-- ✅ **Security Features** (Rate limiting, validation, bcrypt)
-- ✅ **Auto-Admin Setup** (First user becomes admin automatically)
+- ✅ **Patient Management** (Full CRUD operations untuk USER & ADMIN)
+- ✅ **Pagination & Search** (Advanced search dengan alphabetical sorting)
+- ✅ **Statistics & Analytics** (Dashboard data dengan chart support)
+- ✅ **Role-Based Access Control** (USER/ADMIN dengan clear separation)
+- ✅ **Security Features** (Rate limiting, validation, bcrypt, Redis sessions)
 - ✅ **Production Ready** (Logging, error handling, monitoring)
 
-## � User Roles
+## 👥 User Roles & Permissions
 
-### User (Default)
+### 🔵 USER Role (Default)
 
-- View patients
-- Basic operations
+- ✅ **Full CRUD** pada patients (Create, Read, Update, Delete)
+- ✅ **Search & Pagination** semua fitur pencarian
+- ✅ **Statistics Access** view dashboard data
+- ✅ **Profile Management** update own profile
+- ❌ **User Management** tidak bisa manage users lain
 
-### Admin
+### 🔴 ADMIN Role
 
-- All user permissions
-- Create/Update/Delete patients
-- Manage users
-- Excel import/export
-- Create additional admins
+- ✅ **All USER permissions** + additional privileges
+- ✅ **User Management** (view all users, delete users, update roles)
+- ✅ **Admin Operations** (create admin, manage system)
 
-## �📋 API Endpoints
+## 📋 API Endpoints
 
-### Authentication
+### 🔐 Authentication
 
-- `POST /api/v1/auth/registration` - Register new user (first user = auto admin)
-- `POST /api/v1/auth/login` - User login
-- `POST /api/v1/auth/logout` - User logout
-- `POST /api/v1/auth/create-admin` - Create admin user (admin only)
+```http
+POST /api/v1/auth/registration  # Register new user
+POST /api/v1/auth/login         # User login
+POST /api/v1/auth/logout        # User logout
+POST /api/v1/auth/refresh       # Refresh access token
+```
 
-### Patients (Protected Routes)
+### 🏥 Patient Management (USER & ADMIN)
 
-- `GET /api/v1/patients` - Get all patients (authenticated users)
-- `POST /api/v1/patients/create` - Create new patient (admin only)
-- `GET /api/v1/patients/:id` - Get patient by ID (authenticated users)
-- `PUT /api/v1/patients/:id` - Update patient (admin only)
-- `DELETE /api/v1/patients/:id` - Delete patient (admin only)
-- `GET /api/v1/patients/search` - Search patients (authenticated users)
+```http
+# CRUD Operations (Both USER & ADMIN)
+GET    /api/v1/patients         # Get all patients (with pagination)
+POST   /api/v1/patients/create  # Create new patient
+GET    /api/v1/patients/:id     # Get patient by ID
+PUT    /api/v1/patients/:id     # Update patient
+DELETE /api/v1/patients/:id     # Delete patient
 
-### Excel Operations (Admin Only)
+# Search & Filter (Both USER & ADMIN)
+GET /api/v1/patients/search                    # General search
+GET /api/v1/patients/search/name?name=John     # Search by name
+GET /api/v1/patients/search/address?address=Jakarta # Search by address
+GET /api/v1/patients/search/alphabet?letter=A # Filter by alphabet
 
-- `GET /api/v1/patients/excel/export` - Export patients to Excel
-- `POST /api/v1/patients/excel/import` - Import patients from Excel
-- `GET /api/v1/patients/excel/template` - Download Excel template
+# Statistics (Both USER & ADMIN)
+GET /api/v1/patients/total     # Get comprehensive statistics
+```
 
-### User Management (Admin Only)
+### 👤 User Management (ADMIN ONLY)
 
-- `GET /api/v1/users` - Get all users
-- `GET /api/v1/users/:id` - Get user by ID
-- `PUT /api/v1/users/:id` - Update user
-- `DELETE /api/v1/users/:id` - Delete user
+```http
+GET    /api/v1/users/all-users      # Get all users
+DELETE /api/v1/users/delete/:id     # Delete user
+PUT    /api/v1/users/update-role    # Update user role
+GET    /api/v1/users/activity/:id   # Get user activity
 
-### Health Check
-
-- `GET /health` - Application health status
+# Profile Management (USER & ADMIN)
+GET /api/v1/users/me              # Get own profile
+PUT /api/v1/users/update-info     # Update own profile
+PUT /api/v1/users/update-password # Change own password
+```
 
 ## 🔧 Technology Stack
 
 - **Runtime:** Node.js with TypeScript
 - **Framework:** Express.js
-- **Database:** MongoDB
-- **Cache:** Redis
-- **File Storage:** Cloudinary
-- **Authentication:** JWT
-- **Validation:** Joi
-- **Security:** Helmet, CORS, Rate limiting
+- **Database:** MongoDB dengan Mongoose ODM
+- **Cache & Sessions:** Redis
+- **Authentication:** JWT dengan refresh tokens
+- **Validation:** Joi schemas
+- **Security:** bcrypt, Rate limiting, CORS, Helmet
+- **Logging:** Winston
+- **File Handling:** Multer
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- MongoDB database
-- Redis instance
-- Cloudinary account
+```bash
+# Required software
+Node.js >= 18.x
+MongoDB >= 6.x
+Redis >= 6.x
+npm atau yarn
+```
 
 ### Installation
 
 ```bash
-# Clone repository
-git clone <repository-url>
-cd puskesmas-backend
+# 1. Clone repository
+git clone https://github.com/Santoss104/uptpuskesmas-backend.git
+cd uptpuskesmas-backend
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Setup environment variables
+# 3. Setup environment variables
 cp .env.example .env
-# Edit .env with your configuration
+# Edit .env file dengan configuration Anda
 
-# Start development server
-npm start
+# 4. Start required services
+# MongoDB: mongod
+# Redis: redis-server
+
+# 5. Run application
+npm run dev          # Development mode
+npm start           # Production mode
 ```
 
 ### Environment Variables
 
-Required environment variables (see `.env.example`):
-
-```env
-NODE_ENV=development
+```bash
+# Server Configuration
 PORT=5000
+NODE_ENV=development
 
 # Database
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=mongodb://localhost:27017/puskesmas
+# or MongoDB Atlas: mongodb+srv://user:pass@cluster.mongodb.net/puskesmas
 
-# JWT
-JWT_SECRET=your_jwt_secret
-JWT_REFRESH_SECRET=your_refresh_secret
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here
+JWT_EXPIRE=15m
+JWT_REFRESH_EXPIRE=7d
 
-# Redis
-REDIS_HOST=localhost
-REDIS_PORT=6379
+# Redis Configuration
+REDIS_URL=redis://localhost:6379
 
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+# Security
+RATE_LIMIT_WINDOW=900000
+RATE_LIMIT_MAX=100
 ```
 
-### First Time Setup
+## 📊 API Usage Examples
 
-1. Register the first user - akan otomatis menjadi admin
-2. Or use manual script: `npx tsx make-admin.ts` (if available)
-3. Admin can then create additional users/admins
-
-## 📊 Data Format
-
-### User Schema
-
-```json
-{
-  "email": "admin@puskesmas.com",
-  "password": "hashed_password",
-  "role": "admin",
-  "avatar": {
-    "public_id": "avatar_id",
-    "url": "https://cloudinary.com/avatar.jpg"
-  },
-  "createdAt": "2025-07-29T12:48:10.056Z",
-  "updatedAt": "2025-07-29T12:48:10.056Z"
-}
-```
-
-### Patient Schema
-
-```json
-{
-  "name": "Anita",
-  "address": "Desa Baru",
-  "registrationNumber": "01.01.00.01",
-  "birthDay": "Palembang, 1961-09-18",
-  "createdAt": "2025-07-29T12:48:10.056Z",
-  "updatedAt": "2025-07-29T12:48:10.056Z"
-}
-```
-
-## 🔒 Security Features
-
-- ✅ Environment variables protection
-- ✅ Rate limiting (Auth: 5/15min, API: 100/15min)
-- ✅ Password hashing (bcrypt)
-- ✅ JWT token rotation with refresh tokens
-- ✅ Role-based authorization (User/Admin)
-- ✅ Input validation & sanitization (Joi schemas)
-- ✅ CORS protection
-- ✅ Security headers (Helmet)
-- ✅ First-user auto-admin setup
-- ✅ Protected routes with middleware
-
-## 🔐 Authorization Levels
-
-| Feature          | User | Admin |
-| ---------------- | ---- | ----- |
-| View Patients    | ✅   | ✅    |
-| Create Patients  | ❌   | ✅    |
-| Update Patients  | ❌   | ✅    |
-| Delete Patients  | ❌   | ✅    |
-| Excel Operations | ❌   | ✅    |
-| User Management  | ❌   | ✅    |
-| Create Admins    | ❌   | ✅    |
-
-## 🛠️ Development Scripts
+### Authentication
 
 ```bash
-# Start server
-npm start
+# Register new user
+curl -X POST http://localhost:5000/api/v1/auth/registration \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123",
+    "confirmPassword": "password123"
+  }'
 
-# Development with auto-reload
-npm run dev
-
-# Type checking
-npm run type-check
-
-# Build for production
-npm run build
+# Login
+curl -X POST http://localhost:5000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123"
+  }'
 ```
 
-## 👨‍💻 Developer
+### Patient Operations
 
-**Ikhlas Abdillah** - Backend Developer
+```bash
+# Get patients with pagination
+curl -X GET "http://localhost:5000/api/v1/patients?page=1&limit=10" \
+  -H "access-token: YOUR_JWT_TOKEN"
+
+# Create patient
+curl -X POST http://localhost:5000/api/v1/patients/create \
+  -H "Content-Type: application/json" \
+  -H "access-token: YOUR_JWT_TOKEN" \
+  -d '{
+    "name": "John Doe",
+    "address": "Jakarta Pusat",
+    "registrationNumber": "P001.2025",
+    "birthPlace": "Jakarta",
+    "birthDay": "1990-01-15"
+  }'
+
+# Search patients
+curl -X GET "http://localhost:5000/api/v1/patients/search/name?name=John" \
+  -H "access-token: YOUR_JWT_TOKEN"
+```
+
+## 🛡️ Security Features
+
+### Rate Limiting
+
+- Login attempts: 5 per 15 minutes
+- General API: 100 requests per 15 minutes
+- Account lockout after 5 failed login attempts
+
+### Data Validation
+
+- Joi schemas untuk semua input
+- Custom validation messages
+- Input sanitization
+
+### Password Security
+
+- bcrypt hashing dengan salt rounds
+- Minimum password requirements
+- Password change tracking
+
+## 📁 Project Structure
+
+```
+📦 puskesmas-backend/
+├── 📁 controllers/          # Business logic controllers
+├── 📁 middleware/          # Authentication & validation
+├── 📁 models/              # Database schemas (Mongoose)
+├── 📁 routes/              # API route definitions
+├── 📁 services/            # Business logic services
+├── 📁 utils/               # Utility functions
+├── 📁 validators/          # Data validation schemas
+├── 📄 app.ts               # Express application setup
+├── 📄 server.ts            # Server entry point
+├── 📄 package.json         # Dependencies & scripts
+└── 📄 README.md            # Documentation
+```
+
+## 🚀 Deployment
+
+### Production Setup
+
+```bash
+# 1. Set production environment
+export NODE_ENV=production
+
+# 2. Install production dependencies only
+npm ci --only=production
+
+# 3. Build application (if using build step)
+npm run build
+
+# 4. Start with PM2 (recommended)
+pm2 start server.ts --name "puskesmas-api"
+
+# Or start directly
+npm start
+```
+
+### Important Security Notes
+
+⚠️ **NEVER commit these files to GitHub:**
+
+- `.env` - Contains sensitive credentials
+- `logs/` - Application logs may contain sensitive data
+- `*.key, *.pem` - SSL certificates and private keys
+- `make-admin.ts` - Development utility script
+
+✅ **Safe to commit:**
+
+- `.env.example` - Template tanpa credentials
+- Source code files
+- Documentation
+- Configuration files tanpa secrets
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the ISC License.
+
+## 👨‍💻 Author
+
+**Ikhlas Abdillah**
+
+- GitHub: [@Santoss104](https://github.com/Santoss104)
+
+---
+
+**📞 Support**
+
+Jika ada pertanyaan atau masalah, silakan buat issue di repository ini.
+
+**🎯 Status: Production Ready** ✅

@@ -249,3 +249,93 @@ export const getUserProfile = CatchAsyncError(
     }
   }
 );
+
+// Get user stats (for profile dashboard)
+export const getUserStats = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?._id;
+      const user = await UserModel.findById(userId);
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      // Get basic stats
+      const stats = {
+        profile: {
+          email: user.email,
+          role: user.role,
+          isVerified: user.isVerified,
+          lastLogin: user.lastLogin,
+          memberSince: (user as any).createdAt,
+        },
+        permissions: {
+          canCreatePatients: true,
+          canUpdatePatients: true,
+          canDeletePatients: user.role === "admin",
+          canViewAllUsers: user.role === "admin",
+          canManageUsers: user.role === "admin",
+        },
+      };
+
+      res.status(200).json({
+        success: true,
+        message: "User statistics retrieved successfully",
+        data: stats,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+
+// Get user activity log (admin only)
+export const getUserActivityLog = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params;
+      const { page = 1, limit = 10 } = req.query;
+
+      // This would typically come from an activity log model
+      // For now, we'll return user info with login history
+      const user = await UserModel.findById(userId).select("-password");
+
+      if (!user) {
+        return next(new ErrorHandler("User not found", 404));
+      }
+
+      const activityLog = {
+        user: {
+          email: user.email,
+          role: user.role,
+          lastLogin: user.lastLogin,
+          loginAttempts: user.loginAttempts,
+          isLocked: user.isLocked(),
+          createdAt: (user as any).createdAt,
+        },
+        activities: [
+          // This would be populated from actual activity logs
+          {
+            action: "LOGIN",
+            timestamp: user.lastLogin || (user as any).createdAt,
+            details: "User logged in successfully",
+          },
+          {
+            action: "PROFILE_UPDATE",
+            timestamp: (user as any).updatedAt,
+            details: "Profile information updated",
+          },
+        ],
+      };
+
+      res.status(200).json({
+        success: true,
+        message: "User activity log retrieved successfully",
+        data: activityLog,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
