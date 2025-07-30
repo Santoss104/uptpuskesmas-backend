@@ -228,42 +228,63 @@ curl -X GET "http://localhost:5000/api/v1/patients/search/name?name=John" \
 └── 📄 README.md            # Documentation
 ```
 
-## 🚀 Deployment
+## � Development
 
-### Production Setup
+### Local Development Setup
 
 ```bash
-# 1. Set production environment
-export NODE_ENV=production
+# 1. Install dependencies
+npm install
 
-# 2. Install production dependencies only
-npm ci --only=production
+# 2. Setup environment variables
+cp .env.example .env
+# Edit .env with your local configuration
 
-# 3. Build application (if using build step)
-npm run build
-
-# 4. Start with PM2 (recommended)
-pm2 start server.ts --name "puskesmas-api"
-
-# Or start directly
-npm start
+# 3. Start development server
+npm run dev
 ```
 
-### Important Security Notes
+### Available Scripts
 
-⚠️ **NEVER commit these files to GitHub:**
+```bash
+npm run dev          # Development with hot reload
+npm run start        # Production mode
+npm run start:prod   # Production with explicit NODE_ENV
+npm run start:dev    # Development with explicit NODE_ENV
+npm run build        # TypeScript compilation
+```
 
-- `.env` - Contains sensitive credentials
+### 🚨 Security & Deployment
+
+⚠️ **CRITICAL: Files that MUST NEVER be committed to GitHub:**
+
+- `.env*` - Contains sensitive credentials & secrets
 - `logs/` - Application logs may contain sensitive data
-- `*.key, *.pem` - SSL certificates and private keys
+- `*.key, *.pem, *.crt` - SSL certificates and private keys
 - `make-admin.ts` - Development utility script
+- `deploy-*.sh` - Deployment scripts with server info
+- `ecosystem.config.js` - PM2 production configuration
+- `Dockerfile` - Container deployment configuration
+- `docker-compose.yml` - Docker orchestration files
+- `DEPLOYMENT.md` - Deployment guides with infrastructure details
 
 ✅ **Safe to commit:**
 
-- `.env.example` - Template tanpa credentials
-- Source code files
-- Documentation
-- Configuration files tanpa secrets
+- `.env.example` - Template without credentials
+- Source code files (`.ts`, `.js`)
+- Documentation (README.md, API docs)
+- Package configuration (`package.json`, `tsconfig.json`)
+- Public configuration files without secrets
+
+### 📋 Deployment Notes
+
+For production deployment:
+1. Create your own deployment scripts locally (don't commit them)
+2. Use environment-specific configuration files
+3. Follow security best practices for your hosting platform
+4. Set up proper monitoring and logging
+5. Configure SSL/TLS certificates
+6. Set up firewall rules and security groups
 
 ## 🤝 Contributing
 
