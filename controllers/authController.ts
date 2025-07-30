@@ -29,7 +29,7 @@ export const registrationUser = CatchAsyncError(
 
       const isEmailExist = await UserModel.findOne({ email });
       if (isEmailExist) {
-        return next(new ErrorHandler("User already exists", 400)); // Less specific error for production
+        return next(new ErrorHandler("User already exists", 400));
       }
 
       // Check if this is the first user - make them admin
@@ -74,7 +74,7 @@ export const registrationUser = CatchAsyncError(
         password,
         avatar: userAvatar,
         isVerified: true,
-        role: isFirstUser ? "admin" : "user", // First user becomes admin
+        role: isFirstUser ? "admin" : "user",
       });
 
       res.status(201).json({
@@ -115,7 +115,7 @@ export const createAdminUser = CatchAsyncError(
       const defaultAvatarUrl =
         "https://ui-avatars.com/api/?name=" +
         encodeURIComponent(email.split("@")[0]) +
-        "&background=dc2626&color=fff&size=200"; // Red background for admin
+        "&background=dc2626&color=fff&size=200";
 
       let userAvatar;
       try {
@@ -181,7 +181,7 @@ export const loginUser = CatchAsyncError(
       );
 
       if (!user) {
-        return next(new ErrorHandler("Invalid credentials", 401)); // Generic error for security
+        return next(new ErrorHandler("Invalid credentials", 401));
       }
 
       // Check if account is locked
@@ -198,7 +198,7 @@ export const loginUser = CatchAsyncError(
       if (!isPasswordMatch) {
         // Increment failed login attempts
         await user.incrementLoginAttempts();
-        return next(new ErrorHandler("Invalid credentials", 401)); // Same generic error
+        return next(new ErrorHandler("Invalid credentials", 401));
       }
 
       // Reset login attempts on successful login

@@ -132,7 +132,6 @@ export const updateProfilePicture = CatchAsyncError(
             await cloudinary.v2.uploader.destroy(user.avatar.public_id);
           } catch (error) {
             console.log("Could not delete old avatar:", error);
-            // Continue even if deletion fails
           }
         }
 
@@ -261,7 +260,6 @@ export const getUserStats = CatchAsyncError(
         return next(new ErrorHandler("User not found", 404));
       }
 
-      // Get basic stats
       const stats = {
         profile: {
           email: user.email,
@@ -297,8 +295,6 @@ export const getUserActivityLog = CatchAsyncError(
       const { userId } = req.params;
       const { page = 1, limit = 10 } = req.query;
 
-      // This would typically come from an activity log model
-      // For now, we'll return user info with login history
       const user = await UserModel.findById(userId).select("-password");
 
       if (!user) {
@@ -315,7 +311,6 @@ export const getUserActivityLog = CatchAsyncError(
           createdAt: (user as any).createdAt,
         },
         activities: [
-          // This would be populated from actual activity logs
           {
             action: "LOGIN",
             timestamp: user.lastLogin || (user as any).createdAt,

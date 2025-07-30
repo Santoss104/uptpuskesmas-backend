@@ -45,11 +45,11 @@ patientSchema.virtual("fullBirthInfo").get(function () {
 });
 
 // Add indexes for better performance on searches and pagination
-patientSchema.index({ name: 1 }); // Primary index for name search and alphabetical sorting
-patientSchema.index({ address: 1 }); // Index for address search
+patientSchema.index({ name: 1 }); 
+patientSchema.index({ address: 1 });
 // registrationNumber already has unique index, no need for explicit index
-patientSchema.index({ createdAt: -1 }); // Index for date sorting
-patientSchema.index({ updatedAt: -1 }); // Index for updated sorting
+patientSchema.index({ createdAt: -1 });
+patientSchema.index({ updatedAt: -1 });
 
 // Compound index for name prefix search (alphabet functionality)
 patientSchema.index({ name: 1, createdAt: -1 });
@@ -60,7 +60,7 @@ patientSchema.index({
   registrationNumber: "text",
   address: "text",
   birthPlace: "text",
-}); // Text index for search functionality
+});
 
 // Override toJSON to replace birthDay with fullBirthInfo
 patientSchema.set("toJSON", {

@@ -18,8 +18,8 @@ export const getAllPatientsService = async (
     page = 1,
     limit = 10,
     search = "",
-    sortBy = "name", // Default sort by name (alfabetis)
-    sortOrder = "asc", // Default ascending untuk alfabetis
+    sortBy = "name",
+    sortOrder = "asc",
   } = params;
 
   // Calculate skip value for pagination
@@ -32,7 +32,7 @@ export const getAllPatientsService = async (
     // Check if search is a single letter (for alphabet search)
     if (search.length === 1) {
       searchQuery = {
-        name: { $regex: `^${search}`, $options: "i" }, // Names starting with the letter
+        name: { $regex: `^${search}`, $options: "i" },
       };
     } else {
       // Full text search across multiple fields
@@ -61,7 +61,7 @@ export const getAllPatientsService = async (
       .sort(sortObject)
       .skip(skip)
       .limit(limit)
-      .lean(); // Use lean() for better performance
+      .lean();
 
     // Calculate pagination info
     const totalPages = Math.ceil(totalPatients / limit);
@@ -81,9 +81,9 @@ export const getAllPatientsService = async (
         prevPage: hasPrevPage ? page - 1 : null,
       },
       summary: {
-        totalPatientsInDatabase: overallTotal, // Total all patients
-        totalSearchResults: totalPatients, // Matching current search
-        showingResults: patients.length, // Currently displayed
+        totalPatientsInDatabase: overallTotal,
+        totalSearchResults: totalPatients,
+        showingResults: patients.length,
         isFiltered: search ? true : false,
       },
     };

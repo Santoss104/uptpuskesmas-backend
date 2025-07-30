@@ -46,7 +46,7 @@ if (process.env.NODE_ENV !== "production") {
           return `${timestamp} [${level.toUpperCase()}] ${service}: ${message}`;
         })
       ),
-      level: "error", // Only show errors and fatals in production console
+      level: "error",
     })
   );
 }

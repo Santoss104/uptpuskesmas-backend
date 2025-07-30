@@ -42,13 +42,12 @@ export const createPatient = CatchAsyncError(
 // Get all patients
 export const getAllPatients = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    // Extract query parameters
     const {
       page = 1,
       limit = 10,
       search = "",
-      sortBy = "name", // Default sort by name untuk alfabetis
-      sortOrder = "asc", // Default ascending untuk alfabetis
+      sortBy = "name",
+      sortOrder = "asc",
     } = req.query;
 
     // Validate and convert parameters
@@ -135,7 +134,6 @@ export const searchPatients = CatchAsyncError(
       query.name = { $regex: regex };
     }
 
-    // Pagination for search results
     const pageNum = Math.max(1, parseInt(page as string) || 1);
     const limitNum = Math.min(
       100,
@@ -145,7 +143,7 @@ export const searchPatients = CatchAsyncError(
 
     const totalPatients = await PatientModel.countDocuments(query);
     const patients = await PatientModel.find(query)
-      .sort({ name: 1 }) // Always sort alphabetically
+      .sort({ name: 1 })
       .skip(skip)
       .limit(limitNum)
       .lean();
