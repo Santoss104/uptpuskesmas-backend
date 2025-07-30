@@ -15,6 +15,35 @@ yarn.lock
 *.env
 .env.*
 
+# 🚨 SECURITY: Deployment & Infrastructure Files - NEVER COMMIT!
+deploy-aws.sh
+deploy-*.sh
+ecosystem.config.js
+ecosystem.*.js
+Dockerfile
+Dockerfile.*
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+
+# 🚨 SECURITY: Admin & Development Scripts - NEVER COMMIT!
+make-admin.ts
+make-admin.js
+admin-*.ts
+admin-*.js
+seed-*.ts
+seed-*.js
+
+# 🚨 SECURITY: SSL/TLS Certificates & Keys - NEVER COMMIT!
+*.key
+*.pem
+*.crt
+*.cert
+*.p12
+*.pfx
+ssl/
+certs/
+
 # Database connection files (sensitive)
 config/database.json
 config/production.json
