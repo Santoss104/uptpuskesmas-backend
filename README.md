@@ -279,6 +279,7 @@ npm run build        # TypeScript compilation
 ### 📋 Deployment Notes
 
 For production deployment:
+
 1. Create your own deployment scripts locally (don't commit them)
 2. Use environment-specific configuration files
 3. Follow security best practices for your hosting platform
