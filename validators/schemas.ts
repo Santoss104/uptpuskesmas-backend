@@ -68,7 +68,7 @@ export const userRegistrationSchema = Joi.object({
           : "Password must be at least 6 characters long",
       "string.pattern.base":
         process.env.NODE_ENV === "production"
-          ? "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&#+\-_=)"
+          ? "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&#+-_=)"
           : "Password must be at least 6 characters long",
     }),
 
