@@ -72,7 +72,7 @@ app.use(compression());
 // Rate limiting with better error handling
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === "production" ? 100 : 1000,
+  max: process.env.NODE_ENV === "production" ? 500 : 2000, // Increased: 500 requests in production, 2000 in dev
   message: {
     success: false,
     message: "Too many requests from this IP, please try again later.",
