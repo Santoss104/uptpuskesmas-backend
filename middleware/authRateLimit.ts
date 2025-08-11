@@ -6,7 +6,7 @@ import { ApiResponseHandler } from "../utils/apiResponse";
 // Rate limiting for login attempts per IP
 export const loginRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === "production" ? 5 : 10, // 5 attempts in production, 10 in dev
+  max: process.env.NODE_ENV === "production" ? 20 : 50, // 20 attempts in production, 50 in dev
   message: {
     success: false,
     message: "Too many login attempts, please try again later.",
@@ -35,7 +35,7 @@ export const loginRateLimit = rateLimit({
 // Rate limiting for registration per IP
 export const registrationRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: process.env.NODE_ENV === "production" ? 3 : 10, // 3 registrations per hour in production
+  max: process.env.NODE_ENV === "production" ? 20 : 50, // 20 registrations per hour in production, 50 in dev
   message: {
     success: false,
     message: "Too many registration attempts, please try again later.",

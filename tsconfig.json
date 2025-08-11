@@ -9,7 +9,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "outDir": "./build",
+    "outDir": "./dist",
     "typeRoots": ["./node_modules/@types", "@types"]
   },
   "include": [

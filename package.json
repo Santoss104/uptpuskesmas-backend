@@ -11,7 +11,8 @@
     "start:dev": "cross-env NODE_ENV=development tsx server.ts",
     "start:prod:win": "set NODE_ENV=production && tsx server.ts",
     "start:dev:win": "set NODE_ENV=development && tsx server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "postbuild": "cp -r public dist/ 2>/dev/null || true"
   },
   "author": "Ikhlas Abdillah",
   "license": "ISC",
@@ -38,6 +39,7 @@
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "redis": "^5.6.0",
+    "tsx": "^4.7.0",
     "winston": "^3.17.0",
     "xlsx": "^0.18.5",
     "xss": "^1.0.15"
