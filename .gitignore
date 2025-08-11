@@ -25,15 +25,13 @@ config/cloudinary.json
 # 🚨 SECURITY: Deployment & Infrastructure Files - NEVER COMMIT!
 deploy-aws.sh
 deploy-*.sh
+fly-secrets.sh
 ecosystem.config.js
 ecosystem.*.js
 ecosystem.config.ts
 ecosystem.*.ts
-Dockerfile
-Dockerfile.*
 docker-compose.yml
 docker-compose.*.yml
-.dockerignore
 DEPLOYMENT.md
 DEPLOYMENT.*.md
 deployment-*.md
