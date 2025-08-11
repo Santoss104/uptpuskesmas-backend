@@ -25,10 +25,10 @@ export const exportPatientsToExcel = CatchAsyncError(
       const worksheet = XLSX.utils.json_to_sheet(excelData);
 
       const columnWidths = [
-        { wch: 25 }, // Name
-        { wch: 35 }, // Address
-        { wch: 20 }, // Registration Number
-        { wch: 25 }, // Birth Day (Birth Place, Birth Date)
+        { wch: 25 },
+        { wch: 35 },
+        { wch: 20 },
+        { wch: 25 },
       ];
       worksheet["!cols"] = columnWidths;
 
@@ -182,10 +182,10 @@ export const downloadExcelTemplate = CatchAsyncError(
 
       // Set column widths
       const columnWidths = [
-        { wch: 25 }, // Name
-        { wch: 20 }, // Address
-        { wch: 20 }, // Registration Number
-        { wch: 25 }, // Birth Day
+        { wch: 25 },
+        { wch: 20 },
+        { wch: 20 },
+        { wch: 25 },
       ];
       worksheet["!cols"] = columnWidths;
 

@@ -25,7 +25,6 @@ export interface IUser extends Document {
   SignAccessToken: () => string;
   SignRefreshToken: () => string;
   isAdmin: () => boolean;
-  // Security methods
   isLocked: () => boolean;
   incrementLoginAttempts: () => Promise<void>;
   resetLoginAttempts: () => Promise<void>;
@@ -49,7 +48,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       minlength: [8, "Password must be at least 8 characters"],
       validate: {
         validator: function (value: string) {
-          // Strong password validation for production
           if (process.env.NODE_ENV === "production") {
             // At least 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
             return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(

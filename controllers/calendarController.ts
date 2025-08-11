@@ -28,7 +28,7 @@ export const getCalendar = CatchAsyncError(
 
     // Default to current month/year if not provided
     const now = new Date();
-    const targetMonth = month ? parseInt(month as string) - 1 : now.getMonth(); // JS months are 0-indexed
+    const targetMonth = month ? parseInt(month as string) - 1 : now.getMonth();
     const targetYear = year ? parseInt(year as string) : now.getFullYear();
 
     // Validate month and year
@@ -152,7 +152,7 @@ function generateCalendar(year: number, month: number): CalendarMonth {
   return {
     month: monthNames[month],
     year: year,
-    monthNumber: month + 1, // Return 1-indexed month for frontend
+    monthNumber: month + 1,
     weeks: weeks,
   };
 }
@@ -165,8 +165,8 @@ export const getMultipleMonths = CatchAsyncError(
     const targetYear = year
       ? parseInt(year as string)
       : new Date().getFullYear();
-    const start = startMonth ? parseInt(startMonth as string) - 1 : 0; // Convert to 0-indexed
-    const end = endMonth ? parseInt(endMonth as string) - 1 : 11; // Convert to 0-indexed
+    const start = startMonth ? parseInt(startMonth as string) - 1 : 0;
+    const end = endMonth ? parseInt(endMonth as string) - 1 : 11;
 
     // Validate inputs
     if (start < 0 || start > 11 || end < 0 || end > 11 || start > end) {

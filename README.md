@@ -1,16 +1,44 @@
-# Puskesmas Backend API
+# 🏥 Puskesmas Backend API
 
-Patient Management System API untuk Puskesmas dengan fitur lengkap dan role-based authentication.
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6%2B-green)](https://www.mongodb.com/)
+[![Redis](https://img.shields.io/badge/Redis-6%2B-red)](https://redis.io/)
+[![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
+
+**Sistem Manajemen Pasien Puskesmas** - RESTful API yang robust untuk mengelola data pasien dengan autentikasi berbasis role, built dengan Node.js, TypeScript, dan MongoDB.
+
+## 📋 Table of Contents
+
+- [🚀 Features](#-features)
+- [👥 User Roles](#-user-roles--permissions)
+- [📋 API Endpoints](#-api-endpoints)
+- [🔧 Tech Stack](#-technology-stack)
+- [⚡ Quick Start](#-quick-start)
+- [🛡️ Security](#️-security-features)
+- [📊 API Examples](#-api-usage-examples)
+- [📁 Project Structure](#-project-structure)
+- [🔧 Development](#-development)
+- [🚀 Deployment](#-deployment)
+- [🤝 Contributing](#-contributing)
 
 ## 🚀 Features
 
-- ✅ **Authentication & Authorization** (JWT dengan refresh tokens + Role-based access)
-- ✅ **Patient Management** (Full CRUD operations untuk USER & ADMIN)
-- ✅ **Pagination & Search** (Advanced search dengan alphabetical sorting)
-- ✅ **Statistics & Analytics** (Dashboard data dengan chart support)
-- ✅ **Role-Based Access Control** (USER/ADMIN dengan clear separation)
-- ✅ **Security Features** (Rate limiting, validation, bcrypt, Redis sessions)
-- ✅ **Production Ready** (Logging, error handling, monitoring)
+### Core Features
+
+- ✅ **Authentication & Authorization** - JWT dengan refresh tokens + Role-based access control
+- ✅ **Patient Management** - Full CRUD operations dengan validasi lengkap
+- ✅ **Advanced Search** - Pencarian berdasarkan nama, alamat, dan filtering alfabet
+- ✅ **Pagination** - Efficient data loading dengan customizable page size
+- ✅ **Statistics Dashboard** - Real-time analytics untuk monitoring data
+- ✅ **User Management** - Admin panel untuk mengelola user dan permissions
+
+### Security & Performance
+
+- 🔒 **Security First** - Rate limiting, input validation, password hashing
+- ⚡ **Performance Optimized** - Redis caching, MongoDB indexing
+- 📝 **Comprehensive Logging** - Winston logging dengan error tracking
+- 🛡️ **Production Ready** - CORS, Helmet, sanitization, dan monitoring
 
 ## 👥 User Roles & Permissions
 
@@ -75,120 +103,99 @@ PUT /api/v1/users/update-password # Change own password
 
 ## 🔧 Technology Stack
 
-- **Runtime:** Node.js with TypeScript
-- **Framework:** Express.js
-- **Database:** MongoDB dengan Mongoose ODM
-- **Cache & Sessions:** Redis
-- **Authentication:** JWT dengan refresh tokens
-- **Validation:** Joi schemas
-- **Security:** bcrypt, Rate limiting, CORS, Helmet
-- **Logging:** Winston
-- **File Handling:** Multer
+| Category           | Technology           | Purpose                        |
+| ------------------ | -------------------- | ------------------------------ |
+| **Runtime**        | Node.js 18+          | JavaScript runtime environment |
+| **Language**       | TypeScript           | Type-safe development          |
+| **Framework**      | Express.js           | Web application framework      |
+| **Database**       | MongoDB              | NoSQL document database        |
+| **ODM**            | Mongoose             | MongoDB object modeling        |
+| **Cache**          | Redis                | Session storage & caching      |
+| **Authentication** | JWT                  | Secure token-based auth        |
+| **Validation**     | Joi                  | Schema validation              |
+| **Security**       | bcrypt, Helmet, CORS | Password hashing & security    |
+| **Logging**        | Winston              | Application logging            |
+| **File Upload**    | Multer               | Multipart form handling        |
 
-## 🚀 Getting Started
+## ⚡ Quick Start
 
 ### Prerequisites
 
+Pastikan Anda telah menginstall:
+
 ```bash
-# Required software
-Node.js >= 18.x
-MongoDB >= 6.x
-Redis >= 6.x
-npm atau yarn
+✅ Node.js >= 18.x
+✅ MongoDB >= 6.x
+✅ Redis >= 6.x
+✅ npm atau yarn
+✅ Git
 ```
 
 ### Installation
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/Santoss104/uptpuskesmas-backend.git
-cd uptpuskesmas-backend
+# 1️⃣ Clone repository
+git clone https://github.com/yourusername/puskesmas-backend.git
+cd puskesmas-backend
 
-# 2. Install dependencies
+# 2️⃣ Install dependencies
 npm install
 
-# 3. Setup environment variables
+# 3️⃣ Setup environment variables
 cp .env.example .env
-# Edit .env file dengan configuration Anda
+# Edit .env file dengan konfigurasi Anda
 
-# 4. Start required services
+# 4️⃣ Start required services
 # MongoDB: mongod
 # Redis: redis-server
 
-# 5. Run application
+# 5️⃣ Run application
 npm run dev          # Development mode
 npm start           # Production mode
 ```
 
-### Environment Variables
+### ⚙️ Environment Configuration
 
-```bash
-# Server Configuration
+Buat file `.env` di root directory:
+
+```env
+# 🌐 Server Configuration
 PORT=5000
 NODE_ENV=development
 
-# Database
+# 🗄️ Database Configuration
 MONGO_URI=mongodb://localhost:27017/puskesmas
-# or MongoDB Atlas: mongodb+srv://user:pass@cluster.mongodb.net/puskesmas
+# Atau MongoDB Atlas: mongodb+srv://user:pass@cluster.mongodb.net/puskesmas
 
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-here
+# 🔐 JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here-minimum-32-characters
 JWT_EXPIRE=15m
 JWT_REFRESH_EXPIRE=7d
 
-# Redis Configuration
+# 🔴 Redis Configuration
 REDIS_URL=redis://localhost:6379
 
-# Security
-RATE_LIMIT_WINDOW=900000
-RATE_LIMIT_MAX=100
+# 🛡️ Security Configuration
+RATE_LIMIT_WINDOW=900000  # 15 minutes in milliseconds
+RATE_LIMIT_MAX=100        # Max requests per window
 ```
 
-## 📊 API Usage Examples
-
-### Authentication
+### 🚀 First Run
 
 ```bash
-# Register new user
-curl -X POST http://localhost:5000/api/v1/auth/registration \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "password123",
-    "confirmPassword": "password123"
-  }'
+# 1. Start your services
+mongod                    # Start MongoDB
+redis-server              # Start Redis
 
-# Login
-curl -X POST http://localhost:5000/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "user@example.com",
-    "password": "password123"
-  }'
-```
+# 2. Run the application
+npm run dev
 
-### Patient Operations
+# 3. Test the API
+curl http://localhost:5000/api/v1/patients
+# Should return authentication required message
 
-```bash
-# Get patients with pagination
-curl -X GET "http://localhost:5000/api/v1/patients?page=1&limit=10" \
-  -H "access-token: YOUR_JWT_TOKEN"
-
-# Create patient
-curl -X POST http://localhost:5000/api/v1/patients/create \
-  -H "Content-Type: application/json" \
-  -H "access-token: YOUR_JWT_TOKEN" \
-  -d '{
-    "name": "John Doe",
-    "address": "Jakarta Pusat",
-    "registrationNumber": "P001.2025",
-    "birthPlace": "Jakarta",
-    "birthDay": "1990-01-15"
-  }'
-
-# Search patients
-curl -X GET "http://localhost:5000/api/v1/patients/search/name?name=John" \
-  -H "access-token: YOUR_JWT_TOKEN"
+# 4. Create first admin user (development only)
+npm run create-admin
 ```
 
 ## 🛡️ Security Features
@@ -211,50 +218,265 @@ curl -X GET "http://localhost:5000/api/v1/patients/search/name?name=John" \
 - Minimum password requirements
 - Password change tracking
 
+## 📊 API Usage Examples
+
+### 🔐 Authentication Examples
+
+#### Register New User
+
+```bash
+curl -X POST http://localhost:5000/api/v1/auth/registration \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "dokter@puskesmas.com",
+    "password": "SecurePass123!",
+    "confirmPassword": "SecurePass123!"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "userId": "64f8a7b2c1234567890abcde",
+    "email": "dokter@puskesmas.com",
+    "role": "USER"
+  }
+}
+```
+
+#### Login
+
+```bash
+curl -X POST http://localhost:5000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "dokter@puskesmas.com",
+    "password": "SecurePass123!"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIs...",
+    "user": {
+      "id": "64f8a7b2c1234567890abcde",
+      "email": "dokter@puskesmas.com",
+      "role": "USER"
+    }
+  }
+}
+```
+
+### 🏥 Patient Management Examples
+
+#### Get All Patients (with Pagination)
+
+```bash
+curl -X GET "http://localhost:5000/api/v1/patients?page=1&limit=10" \
+  -H "access-token: YOUR_JWT_TOKEN"
+```
+
+#### Create New Patient
+
+```bash
+curl -X POST http://localhost:5000/api/v1/patients/create \
+  -H "Content-Type: application/json" \
+  -H "access-token: YOUR_JWT_TOKEN" \
+  -d '{
+    "name": "Budi Santoso",
+    "address": "Jl. Merdeka No. 123, Jakarta Pusat",
+    "registrationNumber": "P001.2025.001",
+    "birthPlace": "Jakarta",
+    "birthDay": "1985-05-15",
+    "phone": "081234567890",
+    "gender": "Laki-laki"
+  }'
+```
+
+#### Search Patients by Name
+
+```bash
+curl -X GET "http://localhost:5000/api/v1/patients/search/name?name=Budi" \
+  -H "access-token: YOUR_JWT_TOKEN"
+```
+
+#### Get Patient Statistics
+
+```bash
+curl -X GET "http://localhost:5000/api/v1/patients/total" \
+  -H "access-token: YOUR_JWT_TOKEN"
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "totalPatients": 1245,
+    "todayRegistrations": 15,
+    "thisMonthRegistrations": 342,
+    "genderDistribution": {
+      "male": 623,
+      "female": 622
+    },
+    "ageGroups": {
+      "children": 245,
+      "adults": 678,
+      "elderly": 322
+    }
+  }
+}
+```
+
 ## 📁 Project Structure
 
 ```
 📦 puskesmas-backend/
-├── 📁 controllers/          # Business logic controllers
-├── 📁 middleware/          # Authentication & validation
-├── 📁 models/              # Database schemas (Mongoose)
-├── 📁 routes/              # API route definitions
-├── 📁 services/            # Business logic services
-├── 📁 utils/               # Utility functions
-├── 📁 validators/          # Data validation schemas
-├── 📄 app.ts               # Express application setup
-├── 📄 server.ts            # Server entry point
-├── 📄 package.json         # Dependencies & scripts
-└── 📄 README.md            # Documentation
+├── 📁 controllers/              # 🎯 Business logic controllers
+│   ├── authController.ts        # Authentication & authorization
+│   ├── patientController.ts     # Patient CRUD operations
+│   ├── userController.ts        # User management
+│   ├── calendarController.ts    # Calendar & scheduling
+│   └── patientExcelController.ts # Excel import/export
+├── 📁 middleware/              # 🛡️ Custom middleware
+│   ├── authMiddleware.ts        # JWT authentication
+│   ├── authRateLimit.ts         # Rate limiting
+│   ├── catchAsyncError.ts       # Error handling
+│   ├── error.ts                 # Global error handler
+│   ├── metrics.ts               # Performance monitoring
+│   └── multerConfig.ts          # File upload configuration
+├── 📁 models/                  # 🗄️ Database schemas (Mongoose)
+│   ├── patientModel.ts          # Patient data model
+│   └── userModel.ts             # User data model
+├── 📁 routes/                  # 🛣️ API route definitions
+│   ├── authRoute.ts             # Authentication routes
+│   ├── patientRoute.ts          # Patient management routes
+│   ├── userRoute.ts             # User management routes
+│   ├── calendarRoute.ts         # Calendar routes
+│   └── patientExcelRoute.ts     # Excel handling routes
+├── 📁 services/                # 🔧 Business logic services
+│   ├── patientService.ts        # Patient business logic
+│   └── userService.ts           # User business logic
+├── 📁 utils/                   # 🛠️ Utility functions
+│   ├── apiResponse.ts           # Standardized API responses
+│   ├── db.ts                    # Database connection
+│   ├── envValidator.ts          # Environment validation
+│   ├── errorHandler.ts          # Error handling utilities
+│   ├── jwt.ts                   # JWT utilities
+│   ├── logger.ts                # Winston logging configuration
+│   └── redis.ts                 # Redis connection & utilities
+├── 📁 validators/              # ✅ Data validation schemas
+│   └── schemas.ts               # Joi validation schemas
+├── 📁 logs/                    # 📋 Application logs (gitignored)
+├── 📁 @types/                  # 🏷️ TypeScript type definitions
+│   └── express/index.d.ts       # Extended Express types
+├── 📄 app.ts                   # ⚙️ Express application setup
+├── 📄 server.ts                # 🚀 Server entry point
+├── 📄 make-admin.ts            # 👑 Admin creation utility
+├── 📄 package.json             # 📦 Dependencies & scripts
+├── 📄 tsconfig.json            # 🔧 TypeScript configuration
+├── 📄 README.md                # 📖 Project documentation
+└── 📄 SECURITY-CHECKLIST.md    # 🛡️ Security guidelines
 ```
 
-## � Development
+### 📋 Key Files Explanation
 
-### Local Development Setup
+| File                    | Purpose           | Description                               |
+| ----------------------- | ----------------- | ----------------------------------------- |
+| `app.ts`                | Application Setup | Express configuration, middleware, routes |
+| `server.ts`             | Entry Point       | Server startup, database connection       |
+| `make-admin.ts`         | Development Tool  | Create admin users (dev only)             |
+| `SECURITY-CHECKLIST.md` | Security Guide    | Security best practices                   |
+
+## 🔧 Development
+
+### 🚀 Development Scripts
 
 ```bash
-# 1. Install dependencies
-npm install
-
-# 2. Setup environment variables
-cp .env.example .env
-# Edit .env with your local configuration
-
-# 3. Start development server
+# Development with hot reload
 npm run dev
+
+# Production mode
+npm start
+
+# Build TypeScript
+npm run build
+
+# Production with explicit environment
+npm run start:prod
+
+# Development with explicit environment
+npm run start:dev
+
+# Windows-specific scripts
+npm run start:prod:win
+npm run start:dev:win
 ```
 
-### Available Scripts
+### 🔄 Development Workflow
+
+1. **Setup Development Environment**
+
+   ```bash
+   # Clone and install
+   git clone <repository-url>
+   cd puskesmas-backend
+   npm install
+
+   # Setup environment
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+2. **Start Development Services**
+
+   ```bash
+   # Start MongoDB
+   mongod --dbpath /path/to/data
+
+   # Start Redis
+   redis-server
+
+   # Start development server
+   npm run dev
+   ```
+
+3. **Testing & Validation**
+
+   ```bash
+   # Test API endpoints
+   curl http://localhost:5000/api/v1/patients
+
+   # Check logs
+   tail -f logs/app.log
+   ```
+
+### 🧪 Testing the API
 
 ```bash
-npm run dev          # Development with hot reload
-npm run start        # Production mode
-npm run start:prod   # Production with explicit NODE_ENV
-npm run start:dev    # Development with explicit NODE_ENV
-npm run build        # TypeScript compilation
+# Health check
+curl http://localhost:5000/health
+
+# Test authentication
+curl -X POST http://localhost:5000/api/v1/auth/registration \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"Test123!","confirmPassword":"Test123!"}'
 ```
 
-### 🚨 Security & Deployment
+## 🚀 Deployment
+
+### 🚨 Security & Deployment Guidelines
 
 ⚠️ **CRITICAL: Files that MUST NEVER be committed to GitHub:**
 
@@ -276,7 +498,7 @@ npm run build        # TypeScript compilation
 - Package configuration (`package.json`, `tsconfig.json`)
 - Public configuration files without secrets
 
-### 📋 Deployment Notes
+### 📋 Production Deployment
 
 For production deployment:
 
