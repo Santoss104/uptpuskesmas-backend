@@ -8,28 +8,39 @@ import { CatchAsyncError } from "../middleware/catchAsyncError";
 export const exportPatientsToExcel = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const patients = await PatientModel.find().select("-__v").lean();
+      // Optimized for 512MB memory - smaller batches
+      const { limit = 1000 } = req.query; // Max 1000 records per export (memory-safe)
+      const maxLimit = Math.min(parseInt(limit as string) || 1000, 1000);
+
+      console.log(
+        `📊 Exporting max ${maxLimit} patients to Excel (memory-optimized)...`
+      );
+      const patients = await PatientModel.find()
+        .select("-__v")
+        .limit(maxLimit)
+        .sort({ createdAt: -1 }) // Latest first
+        .lean();
 
       if (patients.length === 0) {
         return next(new ErrorHandler("No patients found", 404));
       }
 
-      const excelData = patients.map((patient) => ({
+      console.log(`✅ Found ${patients.length} patients for export`);
+
+      const excelData = patients.map((patient: any) => ({
         Name: patient.name,
         Address: patient.address,
         "Registration Number": patient.registrationNumber,
         "Birth Day": `${patient.birthPlace}, ${patient.birthDay}`,
+        "Created At": patient.createdAt
+          ? new Date(patient.createdAt).toLocaleDateString("id-ID")
+          : "N/A",
       }));
 
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(excelData);
 
-      const columnWidths = [
-        { wch: 25 },
-        { wch: 35 },
-        { wch: 20 },
-        { wch: 25 },
-      ];
+      const columnWidths = [{ wch: 25 }, { wch: 35 }, { wch: 20 }, { wch: 25 }];
       worksheet["!cols"] = columnWidths;
 
       XLSX.utils.book_append_sheet(workbook, worksheet, "Patients Data");
@@ -181,12 +192,7 @@ export const downloadExcelTemplate = CatchAsyncError(
       ]);
 
       // Set column widths
-      const columnWidths = [
-        { wch: 25 },
-        { wch: 20 },
-        { wch: 20 },
-        { wch: 25 },
-      ];
+      const columnWidths = [{ wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 25 }];
       worksheet["!cols"] = columnWidths;
 
       XLSX.utils.book_append_sheet(workbook, worksheet, "Patient Template");
