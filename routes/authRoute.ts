@@ -5,11 +5,13 @@ import {
   registrationUser,
   socialAuth,
   createAdminUser,
+  updateAccessToken,
 } from "../controllers/authController";
 import { isAutheticated, authorizeRoles } from "../middleware/authMiddleware";
+import UserModel from "../models/userModel";
 import {
-  loginRateLimit,
   registrationRateLimit,
+  loginRateLimit,
 } from "../middleware/authRateLimit";
 import {
   validateRequest,
@@ -32,6 +34,32 @@ authRouter.post(
   loginUser
 );
 authRouter.get("/logout", isAutheticated, logoutUser);
+authRouter.post("/refresh", updateAccessToken, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user?._id);
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const newAccessToken = user.SignAccessToken();
+
+    res.status(200).json({
+      success: true,
+      message: "Token refreshed successfully",
+      data: {
+        token: newAccessToken,
+      },
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
+      message: error.message || "Token refresh failed",
+    });
+  }
+});
 authRouter.post("/social-auth", loginRateLimit, socialAuth);
 authRouter.post(
   "/create-admin",

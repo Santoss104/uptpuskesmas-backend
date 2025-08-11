@@ -14,23 +14,21 @@ export const exportPatientsToExcel = CatchAsyncError(
         return next(new ErrorHandler("No patients found", 404));
       }
 
-      const excelData = patients.map((patient, index) => ({
-        No: index + 1,
+      const excelData = patients.map((patient) => ({
         Name: patient.name,
         Address: patient.address,
         "Registration Number": patient.registrationNumber,
-        "Birth Day": patient.birthDay,
+        "Birth Day": `${patient.birthPlace}, ${patient.birthDay}`,
       }));
 
       const workbook = XLSX.utils.book_new();
       const worksheet = XLSX.utils.json_to_sheet(excelData);
 
       const columnWidths = [
-        { wch: 5 },
-        { wch: 25 },
-        { wch: 30 },
-        { wch: 20 },
-        { wch: 15 },
+        { wch: 25 }, // Name
+        { wch: 35 }, // Address
+        { wch: 20 }, // Registration Number
+        { wch: 25 }, // Birth Day (Birth Place, Birth Date)
       ];
       worksheet["!cols"] = columnWidths;
 
@@ -157,41 +155,39 @@ export const importPatientsFromExcel = CatchAsyncError(
 export const downloadExcelTemplate = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const templateData = [
-        {
-          Name: "John Doe",
-          Address: "Jl. Contoh No. 123, Jakarta",
-          "Registration Number": "REG001",
-          "Birth Day": "Jakarta, 1990-01-15",
-        },
-        {
-          Name: "Jane Smith",
-          Address: "Jl. Sample No. 456, Bandung",
-          "Registration Number": "REG002",
-          "Birth Day": "Bandung, 1985-05-20",
-        },
-      ];
-
       const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.json_to_sheet(templateData);
 
-      const columnWidths = [{ wch: 25 }, { wch: 30 }, { wch: 20 }, { wch: 15 }];
-      worksheet["!cols"] = columnWidths;
-
-      XLSX.utils.sheet_add_aoa(
-        worksheet,
+      // Create worksheet with simple data structure
+      const worksheet = XLSX.utils.aoa_to_sheet([
+        ["Name", "Address", "Registration Number", "Birth Day"],
         [
-          ["TEMPLATE IMPORT PATIENT DATA"],
-          ["Silakan isi data sesuai format di bawah ini:"],
-          [],
-          ["Name", "Address", "Registration Number", "Birth Day"],
+          "Ikhlas Abdillah",
+          "Jl. Karya 2",
+          "01.00.02.30",
+          "Pekanbaru, 1985-05-20",
         ],
-        { origin: "A1" }
-      );
+        [
+          "Muhammad Revi Suryandi",
+          "Jl. Karya 3",
+          "01.00.02.31",
+          "Rokan Hilir, 1985-05-20",
+        ],
+        [
+          "Muhammad Azizi",
+          "Jl. Karya 4",
+          "01.00.02.32",
+          "Taluk Kuantan, 1985-05-20",
+        ],
+      ]);
 
-      if (!worksheet["!merges"]) worksheet["!merges"] = [];
-      worksheet["!merges"].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } });
-      worksheet["!merges"].push({ s: { r: 1, c: 0 }, e: { r: 1, c: 3 } });
+      // Set column widths
+      const columnWidths = [
+        { wch: 25 }, // Name
+        { wch: 20 }, // Address
+        { wch: 20 }, // Registration Number
+        { wch: 25 }, // Birth Day
+      ];
+      worksheet["!cols"] = columnWidths;
 
       XLSX.utils.book_append_sheet(workbook, worksheet, "Patient Template");
 

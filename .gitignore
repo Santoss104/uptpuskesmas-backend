@@ -5,6 +5,7 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 yarn.lock
+.pnpm-lock.yaml
 
 # Environment variables - NEVER COMMIT THESE!
 .env
@@ -14,6 +15,12 @@ yarn.lock
 .env.production.local
 *.env
 .env.*
+
+# 🚨 SECURITY: Configuration Files - NEVER COMMIT!
+config/production.json
+config/database.json
+config/redis.json
+config/cloudinary.json
 
 # 🚨 SECURITY: Deployment & Infrastructure Files - NEVER COMMIT!
 deploy-aws.sh
@@ -50,10 +57,15 @@ setup-*.js
 *.pfx
 ssl/
 certs/
+private/
+secrets/
 
-# Database connection files (sensitive)
-config/database.json
-config/production.json
+# 🚨 SECURITY: Database Sensitive Files - NEVER COMMIT!
+*.sqlite
+*.sqlite3
+*.db
+dump.rdb
+redis-dump.rdb
 
 # Build outputs
 build/
@@ -161,20 +173,47 @@ temp/
 ehthumbs.db
 Thumbs.db
 
-# Testing files
+# Testing files - NEVER COMMIT!
 test_*.xlsx
 patient_*.xlsx
 patients_*.xlsx
 *.test.xlsx
 /test_exports/
-
-# Testing and utility scripts (development only)
-make-admin.ts
 *test*.js
 *test*.ts
+*test*.html
+test-data/
+test-uploads/
+
+# Development utility scripts - NEVER COMMIT!
 *check*.js
 integration-*.js
 final-*.js
+debug-*.js
+temp-*.js
+temp-*.ts
+
+# Uploaded files (user data) - NEVER COMMIT!
+uploads/
+files/
+public/uploads/
+storage/
+user-files/
+
+# Logs - NEVER COMMIT!
+logs/
+*.log
+combined.log
+error.log
+access.log
+debug.log
+app.log
+
+# Build outputs
+build/
+dist/
+*.tsbuildinfo
+.tsbuildinfo
 
 # Security sensitive files
 *.key
@@ -187,6 +226,9 @@ secrets/
 # Backup files
 *.bak
 *.backup
+backup-*
+*.sql.gz
+*.dump
 
 # Database files
 *.sqlite
@@ -196,8 +238,10 @@ secrets/
 # Redis dump
 dump.rdb
 
-# PM2 logs
+# PM2 logs and config
 .pm2/
+pm2.config.js
+pm2.*.config.js
 
 # Serverless directories
 .serverless/
@@ -213,3 +257,23 @@ dump.rdb
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# Windows-specific files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS-specific files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.temp/
+temp/
+tmp/

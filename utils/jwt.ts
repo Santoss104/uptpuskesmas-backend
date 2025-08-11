@@ -66,9 +66,7 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   res.status(statusCode).json({
     success: true,
     user: userResponse,
-    ...(process.env.NODE_ENV !== "production" && {
-      accessToken,
-      refreshToken,
-    }),
+    accessToken,
+    refreshToken,
   });
 };

@@ -8,6 +8,13 @@ import { updateAccessToken } from "../controllers/authController";
 // authenticated user
 export const isAutheticated = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log("🔍 Auth Headers Debug:", {
+      "access-token": req.headers["access-token"],
+      authorization: req.headers["authorization"],
+      cookie: req.headers["cookie"],
+      allHeaders: Object.keys(req.headers),
+    });
+
     const access_token =
       (req.headers["access-token"] as string) || req.cookies.access_token;
 

@@ -20,15 +20,11 @@ export const patientSchema = Joi.object({
 
   registrationNumber: Joi.string()
     .trim()
-    .pattern(/^[A-Z0-9\.]+$/)
-    .min(3)
-    .max(20)
+    .pattern(/^\d{2}\.\d{2}\.\d{2}\.\d{2}$/)
     .required()
     .messages({
       "string.pattern.base":
-        "Registration number should only contain uppercase letters, numbers, and dots",
-      "string.min": "Registration number must be at least 3 characters long",
-      "string.max": "Registration number cannot exceed 20 characters",
+        "Registration number format must be XX.XX.XX.XX (8 digits with dots)",
     }),
 
   birthPlace: Joi.string()

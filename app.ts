@@ -126,7 +126,10 @@ app.use("/api", limiter);
 app.use("/api/v1/auth", authLimiter);
 
 const bodyLimit = process.env.NODE_ENV === "production" ? "10mb" : "50mb";
+
+// JSON parser for all routes except file upload routes
 app.use(
+  /^(?!.*\/excel\/import).*$/,
   express.json({
     limit: bodyLimit,
     verify: (req, res, buf) => {
@@ -145,7 +148,11 @@ app.use(
   })
 );
 
-app.use(express.urlencoded({ extended: true, limit: bodyLimit }));
+// URL encoded parser for all routes except file upload routes
+app.use(
+  /^(?!.*\/excel\/import).*$/,
+  express.urlencoded({ extended: true, limit: bodyLimit })
+);
 
 // Cookie parser
 app.use(cookieParser());
@@ -169,6 +176,8 @@ app.use(
       "Cache-Control",
       "Pragma",
       "X-Request-ID",
+      "access-token",
+      "refresh-token",
     ],
     exposedHeaders: ["set-cookie", "X-Request-ID"],
   })
