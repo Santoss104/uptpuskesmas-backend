@@ -24,5 +24,5 @@ RUN adduser -S nodejs -u 1001
 RUN chown -R nodejs:nodejs /app
 USER nodejs
 
-# Start the application
+# Start the application with Node.js tsx loader
 CMD ["npm", "start"]

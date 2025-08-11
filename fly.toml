@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for puskesmas-backend on 2025-08-11T21:16:30+07:00
+# fly.toml app configuration file generated for puskesmas-backend-lingering-field-545 on 2025-08-11T21:48:02+07:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'puskesmas-backend'
+app = 'puskesmas-backend-lingering-field-545'
 primary_region = 'sin'
 
 [build]
