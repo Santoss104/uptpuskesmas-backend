@@ -20,11 +20,11 @@ export const patientSchema = Joi.object({
 
   registrationNumber: Joi.string()
     .trim()
-    .pattern(/^\d{2}\.\d{2}\.\d{2}\.\d{2,3}$/)
+    .pattern(/^\d{2}\.\d{2}\.\d{2}\.\d{2,3}[A-Z]?$/)
     .required()
     .messages({
       "string.pattern.base":
-        "Registration number format must be XX.XX.XX.XX or XX.XX.XX.XXX",
+        "Registration number format must be XX.XX.XX.XX, XX.XX.XX.XXX, XX.XX.XX.XX[A-Z], or XX.XX.XX.XXX[A-Z]",
     }),
 
   birthPlace: Joi.string()
