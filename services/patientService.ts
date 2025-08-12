@@ -18,7 +18,7 @@ export const getAllPatientsService = async (
     page = 1,
     limit = 10,
     search = "",
-    sortBy = "name",
+    sortBy = "registrationNumber",
     sortOrder = "asc",
   } = params;
 

@@ -46,7 +46,7 @@ export const getAllPatients = CatchAsyncError(
       page = 1,
       limit = 10,
       search = "",
-      sortBy = "name",
+      sortBy = "registrationNumber",
       sortOrder = "asc",
     } = req.query;
 
