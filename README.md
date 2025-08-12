@@ -1,53 +1,205 @@
 # 🏥 Puskesmas Backend API
 
-[![Node.js](https://img.shields.io/badge/Node.js-18%2B-green)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-6%2B-green)](https://www.mongodb.com/)
-[![Redis](https://img.shields.io/badge/Redis-6%2B-red)](https://redis.io/)
-[![License](https://img.shields.io/badge/License-ISC-yellow.svg)](LICENSE)
+RESTful API untuk sistem manajemen pasien puskesmas dengan authentication dan role-based access control.
 
-**Sistem Manajemen Pasien Puskesmas** - RESTful API yang robust untuk mengelola data pasien dengan autentikasi berbasis role, built dengan Node.js, TypeScript, dan MongoDB.
+## 🚀 Fitur Utama
 
-## 📋 Table of Contents
+- **Authentication** - JWT login/logout dengan role-based access
+- **Patient Management** - CRUD operations dengan validasi lengkap
+- **Search & Filter** - Pencarian nama, alamat, dan filter alphabet
+- **Statistics** - Dashboard analytics dan monitoring data
+- **User Management** - Admin panel untuk manage users
+- **Security** - Rate limiting, input validation, password hashing
 
-- [🚀 Features](#-features)
-- [👥 User Roles](#-user-roles--permissions)
-- [📋 API Endpoints](#-api-endpoints)
-- [🔧 Tech Stack](#-technology-stack)
-- [⚡ Quick Start](#-quick-start)
-- [🛡️ Security](#️-security-features)
-- [📊 API Examples](#-api-usage-examples)
-- [📁 Project Structure](#-project-structure)
-- [🔧 Development](#-development)
-- [🚀 Deployment](#-deployment)
-- [🤝 Contributing](#-contributing)
+## 🛠️ Tech Stack
 
-## 🚀 Features
+- **Runtime**: Node.js 18+ dengan TypeScript
+- **Framework**: Express.js dengan middleware security
+- **Database**: MongoDB dengan Mongoose ODM
+- **Cache**: Redis untuk session dan performance
+- **Authentication**: JWT dengan bcrypt password hashing
+- **Validation**: Joi schemas untuk input validation
+- **Logging**: Winston untuk comprehensive logging
 
-### Core Features
+## ⚡ Quick Start
 
-- ✅ **Authentication & Authorization** - JWT dengan refresh tokens + Role-based access control
-- ✅ **Patient Management** - Full CRUD operations dengan validasi lengkap
-- ✅ **Advanced Search** - Pencarian berdasarkan nama, alamat, dan filtering alfabet
-- ✅ **Pagination** - Efficient data loading dengan customizable page size
-- ✅ **Statistics Dashboard** - Real-time analytics untuk monitoring data
-- ✅ **User Management** - Admin panel untuk mengelola user dan permissions
+### Prerequisites
 
-### Security & Performance
+- Node.js 18+
+- MongoDB (local atau Atlas)
+- Redis (optional, untuk production)
 
-- 🔒 **Security First** - Rate limiting, input validation, password hashing
-- ⚡ **Performance Optimized** - Redis caching, MongoDB indexing
-- 📝 **Comprehensive Logging** - Winston logging dengan error tracking
-- 🛡️ **Production Ready** - CORS, Helmet, sanitization, dan monitoring
+### Installation
 
-## 👥 User Roles & Permissions
+1. **Install dependencies**
 
-### 🔵 USER Role (Default)
+```bash
+npm install
+```
 
-- ✅ **Full CRUD** pada patients (Create, Read, Update, Delete)
-- ✅ **Search & Pagination** semua fitur pencarian
-- ✅ **Statistics Access** view dashboard data
-- ✅ **Profile Management** update own profile
+2. **Environment setup**
+
+```bash
+cp .env.example .env
+# Edit .env dengan konfigurasi database
+```
+
+3. **Run development**
+
+```bash
+npm run dev
+```
+
+### Environment Variables
+
+```env
+# Database
+DATABASE_URL=mongodb://localhost:27017/puskesmas
+MONGO_DB_NAME=puskesmas
+
+# Authentication
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRES_IN=7d
+
+# Redis (optional)
+REDIS_URL=redis://localhost:6379
+
+# Server
+PORT=5000
+NODE_ENV=development
+
+# Security
+BCRYPT_SALT_ROUNDS=12
+RATE_LIMIT_WINDOW=15
+RATE_LIMIT_MAX=100
+```
+
+## 📋 API Endpoints
+
+### Authentication
+
+```
+POST   /api/v1/auth/login     # User login
+POST   /api/v1/auth/logout    # User logout
+GET    /api/v1/auth/me        # Get current user info
+```
+
+### Patients
+
+```
+GET    /api/v1/patients       # Get all patients (paginated)
+POST   /api/v1/patients       # Create new patient
+GET    /api/v1/patients/:id   # Get patient by ID
+PUT    /api/v1/patients/:id   # Update patient
+DELETE /api/v1/patients/:id   # Delete patient
+GET    /api/v1/patients/stats # Get patient statistics
+```
+
+### Users (Admin only)
+
+```
+GET    /api/v1/users          # Get all users
+POST   /api/v1/users          # Create new user
+PUT    /api/v1/users/:id      # Update user
+DELETE /api/v1/users/:id      # Delete user
+```
+
+## 👥 User Roles
+
+- **USER**: CRUD patients, view dashboard, manage own profile
+- **ADMIN**: Semua akses USER + manage users dan system settings
+
+## 🔒 Security Features
+
+- **Rate Limiting**: 100 requests per 15 minutes
+- **Input Validation**: Joi schemas untuk semua endpoints
+- **Password Security**: bcrypt dengan salt rounds
+- **JWT Authentication**: Secure token-based auth
+- **CORS Protection**: Configured untuk production
+- **Request Sanitization**: XSS dan injection protection
+
+## 📊 Patient Registration Format
+
+Mendukung format nomor registrasi fleksibel:
+
+- `XX.XX.XX.XX` - 8 digit standard
+- `XX.XX.XX.XXX` - 9 digit extended
+- `XX.XX.XX.XXA` - 8 digit + letter (A-Z)
+- `XX.XX.XX.XXXA` - 9 digit + letter (A-Z)
+
+## 📁 Project Structure
+
+```
+backend/
+├── controllers/      # Route handlers
+├── middleware/       # Custom middleware
+├── models/          # MongoDB models
+├── routes/          # API routes
+├── services/        # Business logic
+├── utils/           # Helper utilities
+├── validators/      # Input validation schemas
+└── logs/           # Application logs
+```
+
+## 🚀 Production Deployment
+
+**Current Deployment**: [Fly.io](https://fly.io)
+
+### Build Commands
+
+```bash
+npm run build    # Compile TypeScript
+npm start        # Run production server
+```
+
+### Health Check
+
+```
+GET /api/v1/health
+```
+
+## 🛠️ Development
+
+### Available Scripts
+
+```bash
+npm run dev      # Development dengan hot reload
+npm run build    # Build untuk production
+npm start        # Start production server
+npm run lint     # ESLint checking
+npm test         # Run test suite
+```
+
+### Database Seeding
+
+```bash
+npm run seed     # Seed initial admin user
+```
+
+## � API Response Format
+
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": {},
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 10,
+    "totalItems": 100,
+    "itemsPerPage": 10
+  }
+}
+```
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Create Pull Request
+
 - ❌ **User Management** tidak bisa manage users lain
 
 ### 🔴 ADMIN Role
