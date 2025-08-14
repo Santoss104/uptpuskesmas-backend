@@ -24,35 +24,18 @@ export const getUserInfo = CatchAsyncError(
 
 // update user info
 interface IUpdateUserInfo {
+  name?: string;
   email?: string;
 }
 
 export const updateUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { email } = req.body as IUpdateUserInfo;
-      const userId = req.user?._id;
-      const user = await UserModel.findById(userId);
-
-      if (!user) {
-        return next(new ErrorHandler("User not found", 404));
-      }
-
-      if (email) {
-        // Check if email already exists
-        const existingUser = await UserModel.findOne({ email });
-        if (existingUser && String(existingUser._id) !== userId) {
-          return next(new ErrorHandler("Email already exists", 400));
-        }
-        user.email = email;
-      }
-
-      await user.save();
-      await redis.set(userId, JSON.stringify(user));
-
+      // For now, just return a message that the feature is coming soon
       res.status(200).json({
         success: true,
-        user,
+        message: "Profile update feature coming soon",
+        user: req.user, // Return current user data unchanged
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));

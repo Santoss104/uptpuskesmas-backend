@@ -254,10 +254,94 @@ $RECYCLE.BIN/
 .LSOverride
 ._*
 
-# Temporary files
-*.tmp
-*.temp
+# 🚨 SECURITY: Additional Backend-Specific Files - NEVER COMMIT!
+
+# Log files
+logs/
+*.log
+combined.log
+error.log
+access.log
+debug.log
+audit.log
+
+# Upload directories (user-generated content)
+uploads/
+files/
+storage/
+user-files/
+temp-uploads/
+public/uploads/
+static/uploads/
+
+# Database migrations and seeds (if containing sensitive data)
+migrations/*.js
+seeds/*.js
+# Keep migration templates
+!migrations/template.js
+!seeds/template.js
+
+# API documentation with sensitive info
+docs/private/
+api-docs-internal/
+
+# Testing data files
+test-data/
+fixtures/
+mock-data/
+*.test.json
+test_*.xlsx
+patient_*.xlsx
+patients_*.xlsx
+
+# Monitoring and analytics
+monitoring/
+analytics/
+metrics/
+
+# Session storage
+sessions/
+.sessions/
+
+# Cache files
 .cache/
-.temp/
-temp/
-tmp/
+cache/
+redis-cache/
+
+# Process management
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# API keys and credentials
+api-keys.json
+credentials.json
+service-account.json
+auth-config.json
+
+# Development utilities
+check-*
+integration-*
+final-*
+debug-*
+test-*
+
+# Fly.io secrets (keep fly.toml but not secrets)
+.fly/
+fly-secrets.txt
+
+# Docker development files
+docker-compose.override.yml
+docker-compose.local.yml
+Dockerfile.dev
+
+# ✅ IMPORTANT: Files that SHOULD be committed
+# Keep these files - they are safe to commit:
+# - package.json
+# - tsconfig.json
+# - .env.example (template only)
+# - fly.toml (no secrets)
+# - Dockerfile
+# - netlify.toml
+# - README.md
